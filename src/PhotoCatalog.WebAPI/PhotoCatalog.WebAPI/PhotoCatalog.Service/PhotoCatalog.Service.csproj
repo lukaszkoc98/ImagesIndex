@@ -8,4 +8,8 @@
     <PackageReference Include="GroupDocs.Metadata" Version="21.8.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PhotoCatalog.Model\PhotoCatalog.Model.csproj" />
+  </ItemGroup>
+
 </Project>
