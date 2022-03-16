@@ -25,9 +25,16 @@ namespace PhotoCatalog.Service.Services
 
                 if (root != null && root.ExifPackage != null)
                 {
-
+                    var apertureTag = root.ExifPackage.ExifIfdPackage.Where(x => x.Name == "ApertureValue").FirstOrDefault();
+                    var exposureTimeTag = root.ExifPackage.ExifIfdPackage.Where(x => x.Name == "ExposureTime").FirstOrDefault();
+                    var focalLengthTag = root.ExifPackage.ExifIfdPackage.Where(x => x.Name == "FocalLength").FirstOrDefault();
+                    var flashTag = root.ExifPackage.ExifIfdPackage.Where(x => x.Name == "Flash").FirstOrDefault();
                     builder = builder
-                        .Model(root.ExifPackage.Model);
+                        .Model(root.ExifPackage.Model)
+                        .Aperture((double)apertureTag.InterpretedValue.RawValue)
+                        .ExposureTime((double)exposureTimeTag.InterpretedValue.RawValue)
+                        .Flash(flashTag.InterpretedValue.RawValue.ToString())
+                        .FocalLength((double)focalLengthTag.InterpretedValue.RawValue);
 
                 }
             }

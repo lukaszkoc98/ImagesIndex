@@ -9,6 +9,13 @@ namespace PhotoCatalog.Model.Builder
 
         public ImageDTO Build() => _image;
 
+        public ImageDataBuilder Aperture(double aperture)
+        {
+            _image.Aperture = aperture;
+
+            return this;
+        }
+
         public ImageDataBuilder DataString(byte[] data)
         {
             _image.DataString = Convert.ToBase64String(data);
