@@ -14,6 +14,8 @@ namespace PhotoCatalog.Model.DTO
         public double? ExposureTime { get; set; }
         public double? FocalLength { get; set; }
         public string Flash { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
         public DateTime? ModifyDate { get; set; }
         public DateTime? CreateDate { get; set; }
     }

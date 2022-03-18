@@ -9,38 +9,45 @@ namespace PhotoCatalog.Model.Builder
 
         public ImageDTO Build() => _image;
 
+        public ImageDataBuilder Width(int width)
+        {
+            _image.Width = width;
+            return this;
+        }
+
+        public ImageDataBuilder Height(int height)
+        {
+            _image.Height = height;
+            return this;
+        }
+
         public ImageDataBuilder Aperture(double aperture)
         {
             _image.Aperture = aperture;
-
             return this;
         }
 
         public ImageDataBuilder DataString(byte[] data)
         {
             _image.DataString = Convert.ToBase64String(data);
-
             return this;
         }
 
         public ImageDataBuilder ExposureTime(double exposureTime)
         {
             _image.ExposureTime = exposureTime;
-
             return this;
         }
 
         public ImageDataBuilder Flash(string flash)
         {
             _image.Flash = flash;
-
             return this;
         }
 
         public ImageDataBuilder FocalLength(double focalLength)
         {
             _image.FocalLength = focalLength;
-
             return this;
         }
 
