@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PhotoCatalog.Model\PhotoCatalog.Model.csproj" />
+    <ProjectReference Include="..\PhotoCatalog.Settings\PhotoCatalog.Settings.csproj" />
   </ItemGroup>
 
 </Project>
