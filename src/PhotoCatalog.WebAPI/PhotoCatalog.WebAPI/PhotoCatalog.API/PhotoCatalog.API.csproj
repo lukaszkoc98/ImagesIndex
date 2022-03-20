@@ -14,4 +14,8 @@
     <ProjectReference Include="..\PhotoCatalog.Settings\PhotoCatalog.Settings.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="StaticFiles\Images\" />
+  </ItemGroup>
+
 </Project>
