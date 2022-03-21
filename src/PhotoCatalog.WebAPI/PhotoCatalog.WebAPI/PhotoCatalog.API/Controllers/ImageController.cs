@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PhotoCatalog.Service.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +13,14 @@ namespace PhotoCatalog.API.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
+
+        private readonly IImageService _imageService;
+
+        public ImageController(IImageService imageService)
+        {
+            _imageService = imageService;
+        }
+
         [HttpPost]
         [Route("upload-file")]
         public async Task<IActionResult> UploadProfilePicture([FromForm(Name = "imageFile")] IFormFile file, [FromForm(Name = "title")] string title)
@@ -36,6 +45,14 @@ namespace PhotoCatalog.API.Controllers
             }
 
             return Ok(dbPath);
+        }
+
+        [HttpGet]
+        public IActionResult GetMiniatures()
+        {
+            var paths = _imageService.GetAllFilesPaths();
+            var miniatures = _imageService.GetImagesMiniatures(paths);
+            return Ok(miniatures);
         }
     }
 }

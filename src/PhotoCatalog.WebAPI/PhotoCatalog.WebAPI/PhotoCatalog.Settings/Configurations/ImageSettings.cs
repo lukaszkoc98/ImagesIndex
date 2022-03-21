@@ -5,6 +5,7 @@ namespace PhotoCatalog.Settings.Configurations
     public interface IImageSettings
     {
         int MaxMiniatureSize { get; }
+        string ImagesFolderName { get; }
     }
 
     public class ImageSettings : IImageSettings
@@ -17,5 +18,7 @@ namespace PhotoCatalog.Settings.Configurations
         }
 
         public int MaxMiniatureSize { get => _configuration.GetValue<int>("Image:MaxMiniatureSize"); }
+
+        public string ImagesFolderName { get => _configuration["ImagesFolderName"]; }
     }
 }

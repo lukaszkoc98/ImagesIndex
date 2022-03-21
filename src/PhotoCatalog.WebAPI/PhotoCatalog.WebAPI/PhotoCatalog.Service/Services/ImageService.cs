@@ -1,18 +1,28 @@
 ﻿using ExifLibrary;
 using PhotoCatalog.Model.Builder;
 using PhotoCatalog.Model.DTO;
+using PhotoCatalog.Model.Models;
 using PhotoCatalog.Model.ViewModel;
 using PhotoCatalog.Settings.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace PhotoCatalog.Service.Services
 {
-    public class ImageService
+    public interface IImageService
+    {
+        IEnumerable<string> GetAllFilesPaths();
+        Task<ImageDTO> GetImageData(string imagePath);
+        IEnumerable<ImageMiniatureDTO> GetImagesMiniatures(IEnumerable<string> imagesPaths);
+        Task<ImageDTO> UpdateTags(UpdateImageVM model);
+    }
+
+    public class ImageService : IImageService
     {
         private readonly IImageSettings _imageSettings;
 
@@ -74,10 +84,10 @@ namespace PhotoCatalog.Service.Services
 
                 using (MemoryStream m = new MemoryStream())
                 {
-                    resizedImage.Save(m, resizedImage.RawFormat);
+                    resizedImage.Save(m, ImageFormat.Jpeg);
                     byte[] imageBytes = m.ToArray();
 
-                    string base64String = Convert.ToBase64String(imageBytes);
+                    string base64String = $"data:image/jpeg;base64,{Convert.ToBase64String(imageBytes)}";
 
                     images.Add(new ImageMiniatureDTO
                     {
@@ -218,6 +228,13 @@ namespace PhotoCatalog.Service.Services
             g.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
             g.Dispose();
             return (Image)b;
+        }
+
+        public IEnumerable<string> GetAllFilesPaths()
+        {
+            DynatreeItem di = new DynatreeItem(new DirectoryInfo(_imageSettings.ImagesFolderName));
+            di.FillAllFilenames(_imageSettings.ImagesFolderName);
+            return di.AllFilePaths;
         }
     }
 }

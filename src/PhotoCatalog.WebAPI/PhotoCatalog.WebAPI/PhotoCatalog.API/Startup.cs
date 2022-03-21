@@ -10,6 +10,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using PhotoCatalog.Service;
 using PhotoCatalog.Settings;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,7 @@ namespace PhotoCatalog.API
             });
 
             services.AddSettings();
+            services.AddServices();
 
             services.AddSwaggerGen(c =>
             {
@@ -61,11 +63,6 @@ namespace PhotoCatalog.API
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"StaticFiles")),
-                RequestPath = new PathString("/Images")
-            });
 
             app.UseRouting();
             app.UseCors("CorsPolicy");
