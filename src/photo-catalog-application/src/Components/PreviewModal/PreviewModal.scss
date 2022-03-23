@@ -1,0 +1,49 @@
+@import "src/Styles/CommonColors.scss";
+
+.preview-modal__modal {
+    position: absolute;
+    outline: none;
+    background: white;
+    box-shadow: 0px 8px 40px $gray-background;
+    border-radius: 16px;
+    width: 80vw;
+    height: 90vh;
+    padding: 32px;
+    left: 10%;
+}
+.preview-modal__overlay {
+    position: fixed;
+    display: flex;
+    inset: 0px;
+    background-color: $modal-overlay-background;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+.preview-modal__header {
+    height: 32px;
+    display: flex;
+    justify-content: flex-end;
+}
+.preview-modal__image-and-map--wrapper {
+    display: flex;
+    flex-direction: row;
+    padding: 32px;
+    height: 100%;
+    width: 100%;
+    .preview-modal__image {
+        height: 50%;
+        width: 50%;
+    }
+    .preview-modal__map--wrapper {
+        padding-left: 32px;
+        font-size: 48px;
+        justify-content: center;
+    }
+}
+
+.preview-modal__details {
+    font-size: 48px;
+    padding-left: 32px;
+}

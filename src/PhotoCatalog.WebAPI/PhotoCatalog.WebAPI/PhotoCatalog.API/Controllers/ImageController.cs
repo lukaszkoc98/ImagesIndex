@@ -11,5 +11,11 @@ namespace PhotoCatalog.API.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
+
+        [HttpGet("test")]
+        public ActionResult<string> GetImage()
+        {
+            return "image";
+        }
     }
 }
