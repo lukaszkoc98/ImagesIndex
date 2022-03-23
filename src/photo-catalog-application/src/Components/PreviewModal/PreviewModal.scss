@@ -30,13 +30,15 @@
     display: flex;
     flex-direction: row;
     padding: 32px;
-    height: 100%;
+    height: 40%;
     width: 100%;
     .preview-modal__image {
-        height: 50%;
-        width: 50%;
+        height: 100%;
     }
     .preview-modal__map--wrapper {
+        border: red 1px solid;
+        height: 100%;
+        width: 100%;
         padding-left: 32px;
         font-size: 48px;
         justify-content: center;

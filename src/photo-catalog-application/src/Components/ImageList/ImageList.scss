@@ -1,5 +1,72 @@
+@import "src/Styles/CommonColors.scss";
+
 .image-list__header {
     display: flex;
     padding: 16px;
     justify-content: flex-end;
+}
+
+.image-list__miniatures--wrapper {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 20px;
+    grid-auto-rows: minmax(100px, auto);
+}
+
+#image-list__pagination {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-evenly;
+}
+#image-list__pagination ul {
+    display: inline-block;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#image-list__pagination li {
+    display: inline-block;
+    border: 1px solid $modal-overlay-background;
+    border-radius: 4px;
+    height: 32px;
+    width: 32px;
+    margin: 20px 5px 5px 5px;
+}
+#image-list__pagination .pagination {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+#image-list__pagination .previous {
+    margin-right: 20px;
+    width: 80px;
+    border: 0px;
+    display: flex;
+}
+#image-list__pagination .next {
+    margin-left: 20px;
+    width: 80px;
+    border: 0px;
+    display: flex;
+}
+#image-list__pagination .active {
+    background: $dark-green;
+    border: 1px solid $green-text;
+    border-radius: 4px;
+}
+#image-list__pagination li > a {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $gray-text;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
 }
