@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PhotoCatalog.Settings.Configurations;
+using PhotoCatalog.Settings.Initializer;
 
 namespace PhotoCatalog.Settings
 {
@@ -7,6 +8,7 @@ namespace PhotoCatalog.Settings
     {
         public static IServiceCollection AddSettings(this IServiceCollection services)
         {
+            services.AddSingleton<IImageFolderIntializer, ImageFolderIntializer>();
             services.AddSingleton<IImageSettings, ImageSettings>();
             return services;
         }

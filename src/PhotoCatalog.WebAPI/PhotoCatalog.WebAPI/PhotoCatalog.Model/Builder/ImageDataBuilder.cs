@@ -9,19 +9,25 @@ namespace PhotoCatalog.Model.Builder
 
         public ImageDTO Build() => _image;
 
-        public ImageDataBuilder Width(int width)
+        public ImageDataBuilder Width(int? width)
         {
             _image.Width = width;
             return this;
         }
 
-        public ImageDataBuilder Height(int height)
+        public ImageDataBuilder Height(int? height)
         {
             _image.Height = height;
             return this;
         }
 
-        public ImageDataBuilder Aperture(double aperture)
+        public ImageDataBuilder ISOSpeed(ushort? isoSpeed)
+        {
+            _image.ISOSpeed = isoSpeed;
+            return this;
+        }
+
+        public ImageDataBuilder Aperture(double? aperture)
         {
             _image.Aperture = aperture;
             return this;
@@ -33,19 +39,19 @@ namespace PhotoCatalog.Model.Builder
             return this;
         }
 
-        public ImageDataBuilder ExposureTime(double exposureTime)
+        public ImageDataBuilder ExposureTime(double? exposureTime)
         {
             _image.ExposureTime = exposureTime;
             return this;
         }
 
-        public ImageDataBuilder Flash(string flash)
+        public ImageDataBuilder Flash(ushort? flash)
         {
             _image.Flash = flash;
             return this;
         }
 
-        public ImageDataBuilder FocalLength(double focalLength)
+        public ImageDataBuilder FocalLength(double? focalLength)
         {
             _image.FocalLength = focalLength;
             return this;
@@ -58,14 +64,28 @@ namespace PhotoCatalog.Model.Builder
             return this;
         }
 
-        public ImageDataBuilder CreateDate(DateTime createDate)
+        public ImageDataBuilder Make(string make)
+        {
+            _image.Make = make;
+
+            return this;
+        }
+
+        public ImageDataBuilder Path(string path)
+        {
+            _image.Path = path;
+
+            return this;
+        }
+
+        public ImageDataBuilder CreateDate(DateTime? createDate)
         {
             _image.CreateDate = createDate;
 
             return this;
         }
 
-        public ImageDataBuilder ModifyDate(DateTime modifyDate)
+        public ImageDataBuilder ModifyDate(DateTime? modifyDate)
         {
             _image.ModifyDate = modifyDate;
 
