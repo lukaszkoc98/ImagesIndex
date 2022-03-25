@@ -10,67 +10,41 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PhotoCatalog.Service.Services
 {
     public interface IImageService
     {
-        IEnumerable<string> GetAllFilesPaths();
-        Task<ImageDTO> GetImageData(string imagePath);
+        ImageDTO GetImageData(string imagePath);
         IEnumerable<ImageMiniatureDTO> GetImagesMiniatures(IEnumerable<string> imagesPaths);
+        IEnumerable<string> TMP();
         Task<ImageDTO> UpdateTags(UpdateImageVM model);
     }
 
     public class ImageService : IImageService
     {
         private readonly IImageSettings _imageSettings;
+        private readonly IFileInfoStoreService _fileInfoStoreService;
 
-        public ImageService(IImageSettings imageSettings)
+        public ImageService(IImageSettings imageSettings, IFileInfoStoreService fileInfoStoreService)
         {
             _imageSettings = imageSettings;
+            _fileInfoStoreService = fileInfoStoreService;
         }
 
-        public async Task<ImageDTO> GetImageData(string imagePath)
+        public ImageDTO GetImageData(string imagePath)
         {
-            if (!File.Exists(imagePath))
-            {
-                throw new Exception($"Not found on {imagePath}");
-            }
-
-            byte[] imageArray = await File.ReadAllBytesAsync(imagePath);
-
-            var builder = new ImageDataBuilder()
-                .DataString(imageArray)
-                .Path(imagePath);
-
-            var file = await ImageFile.FromFileAsync(imagePath);
-
-            var apertureTag = file.Properties.Get<ExifURational>(ExifTag.ApertureValue);
-            var exposureTimeTag = file.Properties.Get<ExifURational>(ExifTag.ExposureTime);
-            var modelTag = file.Properties.Get<ExifAscii>(ExifTag.Model);
-            var makeTag = file.Properties.Get<ExifAscii>(ExifTag.Make);
-            var focalLengthTag = file.Properties.Get<ExifURational>(ExifTag.FocalLength);
-            var flashTag = file.Properties.Get<ExifEnumProperty<Flash>>(ExifTag.Flash);
-            var heightTag = file.Properties.Get<ExifUInt>(ExifTag.PixelYDimension);
-            var widthTag = file.Properties.Get<ExifUInt>(ExifTag.PixelXDimension); ;
-            var isoSpeedTag = file.Properties.Get<ExifUShort>(ExifTag.ISOSpeedRatings); ;
-            var dateTimeOriginalTag = file.Properties.Get<ExifDateTime>(ExifTag.DateTimeOriginal);
-
-            builder = builder
-                        .CreateDate(dateTimeOriginalTag != null ? dateTimeOriginalTag.Value : null)
-                        .Model(modelTag != null ? modelTag.Value : null)
-                        .Make(makeTag != null ? makeTag.Value : null)
-                        .Aperture(apertureTag != null ? (double)apertureTag.Value : null)
-                        .ExposureTime(exposureTimeTag != null ? (double)exposureTimeTag.Value : null)
-                        .Flash(flashTag != null ? ((ushort)flashTag.Value) : null)
-                        .FocalLength(focalLengthTag != null ? ((double)focalLengthTag.Value) : null)
-                        .ISOSpeed(isoSpeedTag != null ? isoSpeedTag.Value : null)
-                        .Height(heightTag != null ? (int)heightTag.Value : null)
-                        .Width(widthTag != null ? (int)widthTag.Value : null);
-
-            return builder.Build();
+            return _fileInfoStoreService.Images.Where(x => x.Path == imagePath).FirstOrDefault();
         }
+
+        //WYWALIĆ JAK BĘDZIE GOTOWA PAGINACJA - MUSIAŁEM CZYMŚ ZASTĄPIĆ POBIERANIE ŚCIEŻEK
+        public IEnumerable<string> TMP()
+        {
+            return _fileInfoStoreService.Images.Select(x => x.Path);
+        }
+
 
         public IEnumerable<ImageMiniatureDTO> GetImagesMiniatures(IEnumerable<string> imagesPaths)
         {
@@ -170,30 +144,7 @@ namespace PhotoCatalog.Service.Services
 
             await file.SaveAsync(model.Path);
 
-            var apertureTag = file.Properties.Get<ExifURational>(ExifTag.ApertureValue);
-            var exposureTimeTag = file.Properties.Get<ExifURational>(ExifTag.ExposureTime);
-            var modelTag = file.Properties.Get<ExifAscii>(ExifTag.Model);
-            var makeTag = file.Properties.Get<ExifAscii>(ExifTag.Make);
-            var focalLengthTag = file.Properties.Get<ExifURational>(ExifTag.FocalLength);
-            var flashTag = file.Properties.Get<ExifEnumProperty<Flash>>(ExifTag.Flash);
-            var heightTag = file.Properties.Get<ExifUInt>(ExifTag.PixelYDimension);
-            var widthTag = file.Properties.Get<ExifUInt>(ExifTag.PixelXDimension); ;
-            var isoSpeedTag = file.Properties.Get<ExifUShort>(ExifTag.ISOSpeedRatings); ;
-            var dateTimeOriginalTag = file.Properties.Get<ExifDateTime>(ExifTag.DateTimeOriginal);
-
-            builder = builder
-                        .CreateDate(dateTimeOriginalTag != null ? dateTimeOriginalTag.Value : null)
-                        .Model(modelTag != null ? modelTag.Value : null)
-                        .Make(makeTag != null ? makeTag.Value : null)
-                        .Aperture(apertureTag != null ? (double)apertureTag.Value : null)
-                        .ExposureTime(exposureTimeTag != null ? (double)exposureTimeTag.Value : null)
-                        .Flash(flashTag != null ? ((ushort)flashTag.Value) : null)
-                        .FocalLength(focalLengthTag != null ? ((double)focalLengthTag.Value) : null)
-                        .ISOSpeed(isoSpeedTag != null ? isoSpeedTag.Value : null)
-                        .Height(heightTag != null ? (int)heightTag.Value : null)
-                        .Width(widthTag != null ? (int)widthTag.Value : null);
-
-            return builder.Build();
+            return await _fileInfoStoreService.ReloadImageStoredData(model.Path);
         }
 
         private Image resizeImage(Image imgToResize, Size size)
@@ -228,13 +179,6 @@ namespace PhotoCatalog.Service.Services
             g.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
             g.Dispose();
             return (Image)b;
-        }
-
-        public IEnumerable<string> GetAllFilesPaths()
-        {
-            DynatreeItem di = new DynatreeItem(new DirectoryInfo(_imageSettings.ImagesFolderName));
-            di.FillAllFilenames(_imageSettings.ImagesFolderName);
-            return di.AllFilePaths;
         }
     }
 }

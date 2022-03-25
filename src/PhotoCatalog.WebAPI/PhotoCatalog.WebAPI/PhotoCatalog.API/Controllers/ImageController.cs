@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PhotoCatalog.Service.Services;
+using PhotoCatalog.Settings.Configurations;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +16,7 @@ namespace PhotoCatalog.API.Controllers
     {
 
         private readonly IImageService _imageService;
-
+        private readonly IImageSettings _imageSettings;
         public ImageController(IImageService imageService)
         {
             _imageService = imageService;
@@ -28,18 +29,15 @@ namespace PhotoCatalog.API.Controllers
             if (file == null || file.Length == 0)
                 return BadRequest();
 
-            var folderName = Path.Combine("Resources", "Images");
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-
-            if (!Directory.Exists(filePath))
+            if (!Directory.Exists(_imageSettings.ImagesFolderName))
             {
-                Directory.CreateDirectory(filePath);
+                Directory.CreateDirectory(_imageSettings.ImagesFolderName);
             }
 
-            var uniqueFileName = $"{Guid.NewGuid()}.jpg";
-            var dbPath = Path.Combine(folderName, uniqueFileName);
+            var uniqueFileName = $"{title}.jpg";
+            var dbPath = Path.Combine(_imageSettings.ImagesFolderName, uniqueFileName);
 
-            using (var fileStream = new FileStream(Path.Combine(filePath, uniqueFileName), FileMode.Create))
+            using (var fileStream = new FileStream(Path.Combine(_imageSettings.ImagesFolderName, uniqueFileName), FileMode.Create))
             {
                 await file.CopyToAsync(fileStream);
             }
@@ -47,10 +45,13 @@ namespace PhotoCatalog.API.Controllers
             return Ok(dbPath);
         }
 
+        //Do parametrów dodać [FromQuery] KlasaModelu model
+        //Trzeba dodać filtrowanie
         [HttpGet]
         public IActionResult GetMiniatures()
         {
-            var paths = _imageService.GetAllFilesPaths();
+
+            var paths = _imageService.TMP();
             var miniatures = _imageService.GetImagesMiniatures(paths);
             return Ok(miniatures);
         }
