@@ -20,6 +20,8 @@ namespace PhotoCatalog.Service.Services
         Task<ImageDTO> GetImageData(string imagePath);
         IEnumerable<ImageMiniatureDTO> GetImagesMiniatures(IEnumerable<string> imagesPaths);
         Task<ImageDTO> UpdateTags(UpdateImageVM model);
+
+        Task<ImageDTO> DeleteImage(string imagePath);
     }
 
     public class ImageService : IImageService
@@ -236,5 +238,30 @@ namespace PhotoCatalog.Service.Services
             di.FillAllFilenames(_imageSettings.ImagesFolderName);
             return di.AllFilePaths;
         }
+
+        public async Task<ImageDTO> DeleteImage(string imagePath)
+        {
+            try
+            {
+                try
+                {
+                    ImageDTO imageToDelete = await this.GetImageData(imagePath);
+                    if (File.Exists(imagePath))
+                    {
+                        File.Delete(imagePath);
+                    }
+                    return imageToDelete;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"File not found {imagePath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Not able to delete {imagePath}");
+            }
+        }
+
     }
 }

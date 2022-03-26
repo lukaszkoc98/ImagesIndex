@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PhotoCatalog.Model.DTO;
 using PhotoCatalog.Service.Services;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,24 @@ namespace PhotoCatalog.API.Controllers
 
             return Ok(dbPath);
         }
+
+        [HttpDelete]
+        [Route("{imagePath}")]
+        public async Task<ActionResult<ImageDTO>> DeletePicture( 
+            [FromForm(Name = "path")] string path
+            )
+        {
+            try
+            {
+                return Ok(await _imageService.DeleteImage(path));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
 
         [HttpGet]
         public IActionResult GetMiniatures()
