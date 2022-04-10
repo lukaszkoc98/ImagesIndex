@@ -18,8 +18,8 @@ namespace PhotoCatalog.Service.Services
     public interface IImageService
     {
         ImageDTO GetImageData(string imagePath);
-        IEnumerable<ImageMiniatureDTO> GetImagesMiniatures(IEnumerable<string> imagesPaths);
-        IEnumerable<string> TMP();
+        IEnumerable<ImageMiniatureDTO> GetImagesMiniatures(IEnumerable<ImageDTO> imagesPaths);
+        IEnumerable<ImageDTO> GetAllImages();
         Task<ImageDTO> UpdateTags(UpdateImageVM model);
     }
 
@@ -39,21 +39,19 @@ namespace PhotoCatalog.Service.Services
             return _fileInfoStoreService.Images.Where(x => x.Path == imagePath).FirstOrDefault();
         }
 
-        //WYWALIĆ JAK BĘDZIE GOTOWA PAGINACJA - MUSIAŁEM CZYMŚ ZASTĄPIĆ POBIERANIE ŚCIEŻEK
-        public IEnumerable<string> TMP()
+        public IEnumerable<ImageDTO> GetAllImages()
         {
-            return _fileInfoStoreService.Images.Select(x => x.Path);
+            return _fileInfoStoreService.Images;
         }
 
 
-        public IEnumerable<ImageMiniatureDTO> GetImagesMiniatures(IEnumerable<string> imagesPaths)
+        public IEnumerable<ImageMiniatureDTO> GetImagesMiniatures(IEnumerable<ImageDTO> images)
         {
+            var result = new List<ImageMiniatureDTO>();
 
-            var images = new List<ImageMiniatureDTO>();
-
-            foreach (var path in imagesPaths)
+            foreach (var image in images)
             {
-                var img = Image.FromFile(path);
+                var img = Image.FromFile(image.Path);
                 var resizedImage = resizeImage(img, new Size(_imageSettings.MaxMiniatureSize, _imageSettings.MaxMiniatureSize));
 
                 using (MemoryStream m = new MemoryStream())
@@ -63,16 +61,18 @@ namespace PhotoCatalog.Service.Services
 
                     string base64String = $"data:image/jpeg;base64,{Convert.ToBase64String(imageBytes)}";
 
-                    images.Add(new ImageMiniatureDTO
+                    result.Add(new ImageMiniatureDTO
                     {
-                        Name = Path.GetFileName(path),
-                        Path = path,
-                        StringData = base64String
+                        Name = Path.GetFileName(image.Path),
+                        Path = image.Path,
+                        StringData = base64String,
+                        Latitude = image.Latitude,
+                        Longitude = image.Longitude
                     });
                 }
             }
 
-            return images;
+            return result;
         }
 
         public async Task<ImageDTO> UpdateTags(UpdateImageVM model)
@@ -91,6 +91,18 @@ namespace PhotoCatalog.Service.Services
 
             var file = await ImageFile.FromFileAsync(model.Path);
 
+
+            if (model.Longitude.HasValue)
+            {
+                file.Properties.Set(ExifTag.GPSLongitude, Math.Abs(model.Longitude.Value));
+                file.Properties.Set(ExifTag.GPSLongitudeRef, model.Longitude.Value > 0 ? GPSLongitudeRef.East : GPSLongitudeRef.West);
+            }
+
+            if (model.Latitude.HasValue)
+            {
+                file.Properties.Set(ExifTag.GPSLatitude, Math.Abs(model.Latitude.Value));
+                file.Properties.Set(ExifTag.GPSLatitudeRef, model.Latitude.Value > 0 ? GPSLatitudeRef.North : GPSLatitudeRef.South);
+            }
 
             if (model.Aperture.HasValue)
             {

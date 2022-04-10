@@ -18,6 +18,7 @@ namespace PhotoCatalog.Service.Services
         IEnumerable<string> GetAllFilesPaths();
         Task<ImageDTO> GetImageData(string imagePath);
         Task<ImageDTO> ReloadImageStoredData(string path);
+        void Initialize();
     }
 
     public class FileInfoStoreService : IFileInfoStoreService
@@ -29,7 +30,10 @@ namespace PhotoCatalog.Service.Services
         public FileInfoStoreService(IImageSettings imageSettings)
         {
             _imageSettings = imageSettings;
+        }
 
+        public void Initialize()
+        {
             Images = new List<ImageDTO>();
             var tasks = new List<Task<ImageDTO>>();
             foreach (var path in GetAllFilesPaths())
@@ -76,6 +80,21 @@ namespace PhotoCatalog.Service.Services
             var widthTag = file.Properties.Get<ExifUInt>(ExifTag.PixelXDimension); ;
             var isoSpeedTag = file.Properties.Get<ExifUShort>(ExifTag.ISOSpeedRatings); ;
             var dateTimeOriginalTag = file.Properties.Get<ExifDateTime>(ExifTag.DateTimeOriginal);
+            var latitude = file.Properties.Get<ExifURational>(ExifTag.GPSLatitude);
+            var latitudeRef = file.Properties.Get<ExifEnumProperty<GPSLatitudeRef>>(ExifTag.GPSLatitudeRef);
+            var longitude = file.Properties.Get<ExifURational>(ExifTag.GPSLongitude);
+            var longitudeRef = file.Properties.Get<ExifEnumProperty<GPSLongitudeRef>>(ExifTag.GPSLongitudeRef);
+
+            double? latitudeValue = null, longitudeValue = null;
+            if(latitudeRef != null && latitude != null)
+            {
+                latitudeValue = latitudeRef.Value == GPSLatitudeRef.North ? (double)latitude.Value : (double)latitude.Value*(-1);
+            }
+
+            if (longitudeRef != null && longitude != null)
+            {
+                longitudeValue = longitudeRef.Value == GPSLongitudeRef.East ? (double)longitude.Value : (double)longitude.Value * (-1);
+            }
 
             builder = builder
                         .CreateDate(dateTimeOriginalTag != null ? dateTimeOriginalTag.Value : null)
@@ -87,7 +106,9 @@ namespace PhotoCatalog.Service.Services
                         .FocalLength(focalLengthTag != null ? ((double)focalLengthTag.Value) : null)
                         .ISOSpeed(isoSpeedTag != null ? isoSpeedTag.Value : null)
                         .Height(heightTag != null ? (int)heightTag.Value : null)
-                        .Width(widthTag != null ? (int)widthTag.Value : null);
+                        .Width(widthTag != null ? (int)widthTag.Value : null)
+                        .Latitude(latitudeValue.HasValue ? latitudeValue.Value : null)
+                        .Longitude(longitudeValue.HasValue ? longitudeValue.Value : null);
 
             return builder.Build();
         }

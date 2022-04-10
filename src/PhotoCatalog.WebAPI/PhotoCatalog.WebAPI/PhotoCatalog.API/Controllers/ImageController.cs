@@ -51,8 +51,8 @@ namespace PhotoCatalog.API.Controllers
         public IActionResult GetMiniatures()
         {
 
-            var paths = _imageService.TMP();
-            var miniatures = _imageService.GetImagesMiniatures(paths);
+            var images = _imageService.GetAllImages();
+            var miniatures = _imageService.GetImagesMiniatures(images);
             return Ok(miniatures);
         }
     }
