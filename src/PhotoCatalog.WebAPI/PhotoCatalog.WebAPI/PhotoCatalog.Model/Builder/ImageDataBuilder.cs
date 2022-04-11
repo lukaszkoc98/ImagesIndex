@@ -91,5 +91,17 @@ namespace PhotoCatalog.Model.Builder
 
             return this;
         }
+
+        public ImageDataBuilder Latitude(double? latitude)
+        {
+            _image.Latitude = latitude;
+            return this;
+        }
+
+        public ImageDataBuilder Longitude(double? longitude)
+        {
+            _image.Longitude = longitude;
+            return this;
+        }
     }
 }

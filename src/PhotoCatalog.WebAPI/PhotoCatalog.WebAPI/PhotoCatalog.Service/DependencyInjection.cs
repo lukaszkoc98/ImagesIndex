@@ -7,6 +7,7 @@ namespace PhotoCatalog.Service
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddSingleton<IFileInfoStoreService, FileInfoStoreService>();
             services.AddScoped<IImageService, ImageService>();
             return services;
         }
