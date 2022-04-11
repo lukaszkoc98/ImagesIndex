@@ -14,7 +14,6 @@ namespace PhotoCatalog.API.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
-
         private readonly IImageService _imageService;
         private readonly IImageSettings _imageSettings;
         public ImageController(IImageService imageService)
@@ -54,6 +53,12 @@ namespace PhotoCatalog.API.Controllers
             var images = _imageService.GetAllImages();
             var miniatures = _imageService.GetImagesMiniatures(images);
             return Ok(miniatures);
+        }
+
+        [HttpGet("test")]
+        public ActionResult<string> GetImage()
+        {
+            return "image";
         }
     }
 }
