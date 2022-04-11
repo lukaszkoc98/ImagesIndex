@@ -21,6 +21,7 @@ namespace PhotoCatalog.Service.Services
         IEnumerable<ImageMiniatureDTO> GetImagesMiniatures(IEnumerable<ImageDTO> imagesPaths);
         IEnumerable<ImageDTO> GetAllImages();
         Task<ImageDTO> UpdateTags(UpdateImageVM model);
+        Task LoadImage(string path);
     }
 
     public class ImageService : IImageService
@@ -73,6 +74,11 @@ namespace PhotoCatalog.Service.Services
             }
 
             return result;
+        }
+
+        public async Task LoadImage(string path)
+        {
+            await _fileInfoStoreService.LoadImageData(path);
         }
 
         public async Task<ImageDTO> UpdateTags(UpdateImageVM model)

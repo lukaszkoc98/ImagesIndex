@@ -14,7 +14,7 @@ namespace PhotoCatalog.Service.Services
     public interface IFileInfoStoreService
     {
         List<ImageDTO> Images { get; }
-
+        Task LoadImageData(string path);
         IEnumerable<string> GetAllFilesPaths();
         Task<ImageDTO> GetImageData(string imagePath);
         Task<ImageDTO> ReloadImageStoredData(string path);
@@ -80,20 +80,20 @@ namespace PhotoCatalog.Service.Services
             var widthTag = file.Properties.Get<ExifUInt>(ExifTag.PixelXDimension); ;
             var isoSpeedTag = file.Properties.Get<ExifUShort>(ExifTag.ISOSpeedRatings); ;
             var dateTimeOriginalTag = file.Properties.Get<ExifDateTime>(ExifTag.DateTimeOriginal);
-            var latitude = file.Properties.Get<ExifURational>(ExifTag.GPSLatitude);
+            var latitude = file.Properties.Get<GPSLatitudeLongitude>(ExifTag.GPSLatitude);
             var latitudeRef = file.Properties.Get<ExifEnumProperty<GPSLatitudeRef>>(ExifTag.GPSLatitudeRef);
-            var longitude = file.Properties.Get<ExifURational>(ExifTag.GPSLongitude);
+            var longitude = file.Properties.Get<GPSLatitudeLongitude>(ExifTag.GPSLongitude);
             var longitudeRef = file.Properties.Get<ExifEnumProperty<GPSLongitudeRef>>(ExifTag.GPSLongitudeRef);
-
-            double? latitudeValue = null, longitudeValue = null;
-            if(latitudeRef != null && latitude != null)
+            
+            float? latitudeValue = null, longitudeValue = null;
+            if (latitudeRef != null && latitude != null)
             {
-                latitudeValue = latitudeRef.Value == GPSLatitudeRef.North ? (double)latitude.Value : (double)latitude.Value*(-1);
+                latitudeValue = latitudeRef.Value == GPSLatitudeRef.North ? latitude.ToFloat() : latitude.ToFloat() * (-1);
             }
 
             if (longitudeRef != null && longitude != null)
             {
-                longitudeValue = longitudeRef.Value == GPSLongitudeRef.East ? (double)longitude.Value : (double)longitude.Value * (-1);
+                longitudeValue = longitudeRef.Value == GPSLongitudeRef.East ? longitude.ToFloat() : longitude.ToFloat() * (-1);
             }
 
             builder = builder
@@ -122,6 +122,15 @@ namespace PhotoCatalog.Service.Services
                 Images.Add(data);
             }
             return data;
+        }
+
+        public async Task LoadImageData(string path)
+        {
+            var image = await GetImageData(path);
+            if(image != null)
+            {
+                Images.Add(image);
+            }
         }
     }
 }

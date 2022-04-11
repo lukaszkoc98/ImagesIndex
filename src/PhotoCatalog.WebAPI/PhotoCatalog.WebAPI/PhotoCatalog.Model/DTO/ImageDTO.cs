@@ -21,7 +21,7 @@ namespace PhotoCatalog.Model.DTO
         public ushort? ISOSpeed { get; set; }
         public DateTime? ModifyDate { get; set; }
         public DateTime? CreateDate { get; set; }
-        public double? Latitude { get; set; }
-        public double? Longitude { get; set; }
+        public float? Latitude { get; set; }
+        public float? Longitude { get; set; }
     }
 }

@@ -36,10 +36,12 @@ namespace PhotoCatalog.API.Controllers
             var uniqueFileName = $"{title}.jpg";
             var dbPath = Path.Combine(_imageSettings.ImagesFolderName, uniqueFileName);
 
-            using (var fileStream = new FileStream(Path.Combine(_imageSettings.ImagesFolderName, uniqueFileName), FileMode.Create))
+            using (var fileStream = new FileStream(dbPath, FileMode.Create))
             {
                 await file.CopyToAsync(fileStream);
             }
+
+            await _imageService.LoadImage(dbPath);
 
             return Ok(dbPath);
         }
