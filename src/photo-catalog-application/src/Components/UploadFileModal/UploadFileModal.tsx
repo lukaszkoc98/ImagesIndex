@@ -56,6 +56,7 @@ const UploadFileModal = ({ showModal, handleCloseModal }: IUploadFileModal) => {
       onRequestClose={handleCloseModal}
       className="upload-file-modal__modal"
       overlayClassName="upload-file-modal__overlay"
+      ariaHideApp={false}
     >
       <div className="upload-file-modal__header">
         <span>Upload File</span>

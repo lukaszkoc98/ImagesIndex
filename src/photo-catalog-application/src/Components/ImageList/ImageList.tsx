@@ -17,6 +17,8 @@ const ImageList = () => {
   useEffect(() => {
     getMiniatures().then((data) => {
       setImageMiniatures(data);
+      console.log(data[1].name);
+      console.log(data[1].latitude);
     });
   }, []);
 

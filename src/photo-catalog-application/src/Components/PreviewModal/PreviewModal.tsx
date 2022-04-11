@@ -16,6 +16,7 @@ const PreviewModal = ({ showModal, handleCloseModal }: IPreviewModal) => {
       onRequestClose={handleCloseModal}
       className="preview-modal__modal"
       overlayClassName="preview-modal__overlay"
+      ariaHideApp={false}
     >
       <div className="preview-modal__header">
         <img src={CancelIcon} alt="Cancel icon" onClick={handleCloseModal} />
