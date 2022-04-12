@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PhotoCatalog.Model.DTO;
+using PhotoCatalog.Model.ViewModel;
 using PhotoCatalog.Service.Services;
 using PhotoCatalog.Settings.Configurations;
 using System;
@@ -61,6 +63,12 @@ namespace PhotoCatalog.API.Controllers
         public ActionResult<string> GetImage()
         {
             return "image";
+        }
+
+        [HttpPut]
+        public async Task<ImageDTO> Update([FromBody] UpdateImageVM model)
+        {
+            return await _imageService.UpdateTags(model);
         }
     }
 }

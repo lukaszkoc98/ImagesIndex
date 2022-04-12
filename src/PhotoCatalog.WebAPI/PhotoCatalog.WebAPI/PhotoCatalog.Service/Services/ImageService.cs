@@ -91,10 +91,6 @@ namespace PhotoCatalog.Service.Services
 
             byte[] imageArray = await File.ReadAllBytesAsync(model.Path);
 
-            var builder = new ImageDataBuilder()
-                .DataString(imageArray)
-                .Path(model.Path);
-
             var file = await ImageFile.FromFileAsync(model.Path);
 
 
