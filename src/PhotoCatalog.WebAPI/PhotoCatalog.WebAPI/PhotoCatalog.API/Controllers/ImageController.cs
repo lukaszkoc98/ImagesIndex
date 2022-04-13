@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PhotoCatalog.Model.DTO;
+using PhotoCatalog.Model.ViewModel;
 using PhotoCatalog.Service.Services;
 using PhotoCatalog.Settings.Configurations;
 using System;
@@ -36,10 +38,12 @@ namespace PhotoCatalog.API.Controllers
             var uniqueFileName = $"{title}.jpg";
             var dbPath = Path.Combine(_imageSettings.ImagesFolderName, uniqueFileName);
 
-            using (var fileStream = new FileStream(Path.Combine(_imageSettings.ImagesFolderName, uniqueFileName), FileMode.Create))
+            using (var fileStream = new FileStream(dbPath, FileMode.Create))
             {
                 await file.CopyToAsync(fileStream);
             }
+
+            await _imageService.LoadImage(dbPath);
 
             return Ok(dbPath);
         }
@@ -59,6 +63,12 @@ namespace PhotoCatalog.API.Controllers
         public ActionResult<string> GetImage()
         {
             return "image";
+        }
+
+        [HttpPut]
+        public async Task<ImageDTO> Update([FromBody] UpdateImageVM model)
+        {
+            return await _imageService.UpdateTags(model);
         }
     }
 }
