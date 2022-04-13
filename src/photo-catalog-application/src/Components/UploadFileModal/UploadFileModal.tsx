@@ -1,10 +1,11 @@
 import "./UploadFileModal.scss";
 import Modal from "react-modal";
 import CancelIcon from "../../Images/Cancel-icon.svg";
+import DeleteIcon from "../../Images/Delete-icon.svg";
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { maxFileSizeInBytes } from "../../Constants/FileConstants";
 import Button from "../../Common/Button/Button";
+import { uploadImage } from "../../API/Endpoints/ImageController";
 
 interface IUploadFileModal {
   showModal: boolean;
@@ -25,7 +26,6 @@ const UploadFileModal = ({ showModal, handleCloseModal }: IUploadFileModal) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     maxSize: 10485760,
-    accept: [],
   });
 
   const removeFile = (file: File) => {
@@ -40,13 +40,14 @@ const UploadFileModal = ({ showModal, handleCloseModal }: IUploadFileModal) => {
     await Promise.all(
       myFiles.map(async (fileToUpload) => {
         const formData = new FormData();
-        formData.append("formFile", fileToUpload);
-        formData.append("fileName", fileToUpload.name);
-        console.log(formData);
+        formData.append("imageFile", fileToUpload);
+        formData.append("title", fileToUpload.name);
+        uploadImage(formData);
       })
     ).then(() => {
-      handleCloseModal();
+      setMyFiles([]);
       setIsUploading(false);
+      handleCloseModal();
     });
   };
 
@@ -66,9 +67,24 @@ const UploadFileModal = ({ showModal, handleCloseModal }: IUploadFileModal) => {
         <input {...getInputProps()} />
         Drag and drop files or select files
       </div>
+      <span>Files:</span>
+      <br />
+      {myFiles.map((file, index) => {
+        return (
+          <div className="upload-file-modal__file-wrapper" key={index}>
+            <span>{file.name}</span>;
+            <img
+              src={DeleteIcon}
+              alt="Delete icon"
+              className="upload-file-modal_delete-icon"
+              onClick={() => removeFile(file)}
+            ></img>
+          </div>
+        );
+      })}
       <div className="upload-file-modal__buttons--wrapper">
         <Button text="Cancel" onClick={handleCloseModal} />
-        <Button text="Upload" onClick={() => {}} />
+        <Button text="Upload" onClick={uploadFiles} isLoading={isUploading} />
       </div>
     </Modal>
   );
