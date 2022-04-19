@@ -48,15 +48,15 @@ namespace PhotoCatalog.API.Controllers
             return Ok(dbPath);
         }
 
-        //Do parametrów dodać [FromQuery] KlasaModelu model
         //Trzeba dodać filtrowanie
         [HttpGet]
-        public IActionResult GetMiniatures()
+        public IActionResult GetMiniatures([FromQuery] PaginationDTO pagination)
         {
-
             var images = _imageService.GetAllImages();
             var miniatures = _imageService.GetImagesMiniatures(images);
-            return Ok(miniatures);
+            var miniaturesPage = miniatures.Skip((pagination.PageIndex - 1) * pagination.PageSize).Take(pagination.PageSize);
+
+            return Ok(miniaturesPage);
         }
 
         [HttpGet("test")]
