@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PhotoCatalog.Model.DTO;
+using PhotoCatalog.Model.Enums;
 using PhotoCatalog.Model.ViewModel;
 using PhotoCatalog.Service.Services;
 using PhotoCatalog.Settings.Configurations;
@@ -50,13 +51,47 @@ namespace PhotoCatalog.API.Controllers
 
         //Trzeba dodać filtrowanie
         [HttpGet]
-        public IActionResult GetMiniatures([FromQuery] PaginationDTO pagination)
+        public IActionResult GetMiniatures([FromQuery] ImageParamDTO param)
         {
             var images = _imageService.GetAllImages();
-            var miniatures = _imageService.GetImagesMiniatures(images);
-            var miniaturesPage = miniatures.Skip((pagination.PageIndex - 1) * pagination.PageSize).Take(pagination.PageSize);
+            IEnumerable<ImageDTO> sortImages = null;
 
-            return Ok(miniaturesPage);
+            switch (param.SortType)
+            {
+                case SortEnum.NameASC:
+                    sortImages = images.OrderBy(x => Path.GetFileName(x.Path));
+                    break;
+                case SortEnum.NameDESC:
+                    sortImages = images.OrderByDescending(x => Path.GetFileName(x.Path));
+                    break;
+                case SortEnum.ModifyDateASC:
+                    sortImages = images.OrderBy(x => x.ModifyDate);
+                    break;
+                case SortEnum.ModifyDateDESC:
+                    sortImages = images.OrderByDescending(x => x.ModifyDate);
+                    break;
+                case SortEnum.FocalLengthASC:
+                    sortImages = images.OrderBy(x => x.FocalLength);
+                    break;
+                case SortEnum.FocalLengthDESC:
+                    sortImages = images.OrderByDescending(x => x.FocalLength);
+                    break;
+                case SortEnum.ExposureTimeASC:
+                    sortImages = images.OrderBy(x => x.ExposureTime);
+                    break;
+                case SortEnum.ExposureTimeDESC:
+                    sortImages = images.OrderByDescending(x => x.ExposureTime);
+                    break;
+                default:
+                    break;
+            }
+
+
+            var miniatures = _imageService.GetImagesMiniatures(sortImages);
+            //var miniatures = _imageService.GetImagesMiniatures(images);
+            var miniaturesPagin = miniatures.Skip((param.PageIndex - 1) * param.PageSize).Take(param.PageSize);
+
+            return Ok(miniaturesPagin);
         }
 
         [HttpGet("test")]
