@@ -37,6 +37,7 @@ namespace PhotoCatalog.Service.Services
 
         public ImageDTO GetImageData(string imagePath)
         {
+            imagePath = imagePath.Replace("\\\\", "\\");
             return _fileInfoStoreService.Images.Where(x => x.Path == imagePath).FirstOrDefault();
         }
 
