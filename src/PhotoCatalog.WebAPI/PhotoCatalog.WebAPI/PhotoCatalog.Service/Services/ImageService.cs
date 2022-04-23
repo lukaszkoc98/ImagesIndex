@@ -240,28 +240,20 @@ namespace PhotoCatalog.Service.Services
         }
 
         public async Task<ImageDTO> DeleteImage(string imagePath)
-        {
+        {           
             try
             {
-                try
+                ImageDTO imageToDelete = await this.GetImageData(imagePath);
+                if (File.Exists(imagePath))
                 {
-                    ImageDTO imageToDelete = await this.GetImageData(imagePath);
-                    if (File.Exists(imagePath))
-                    {
-                        File.Delete(imagePath);
-                    }
-                    return imageToDelete;
+                    File.Delete(imagePath);
                 }
-                catch (Exception ex)
-                {
-                    throw new Exception($"File not found {imagePath}");
-                }
+                return imageToDelete;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Not able to delete {imagePath}");
-            }
+                throw new Exception($"File not found {imagePath}");
+            }            
         }
-
     }
 }
