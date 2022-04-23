@@ -5,11 +5,21 @@ interface IButton {
   text: string;
   onClick: () => void;
   isLoading?: boolean;
+  marginRight?: number;
 }
 
-const Button = ({ text, onClick, isLoading = false }: IButton) => {
+const Button = ({
+  text,
+  onClick,
+  isLoading = false,
+  marginRight = 0,
+}: IButton) => {
   return (
-    <button className="button" onClick={onClick}>
+    <button
+      className="button"
+      onClick={onClick}
+      style={{ marginRight: `${marginRight}px` }}
+    >
       {!isLoading ? (
         <span className="button__text">{text}</span>
       ) : (

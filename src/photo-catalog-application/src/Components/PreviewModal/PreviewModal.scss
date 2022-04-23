@@ -21,11 +21,6 @@
     align-items: center;
     z-index: 10;
 }
-.preview-modal__header {
-    height: 32px;
-    display: flex;
-    justify-content: flex-end;
-}
 .preview-modal__image-and-map--wrapper {
     display: flex;
     flex-direction: row;
@@ -36,9 +31,9 @@
         height: 100%;
     }
     .preview-modal__map--wrapper {
-        border: red 1px solid;
         height: 100%;
         width: 100%;
+        padding-bottom: 20px;
         padding-left: 32px;
         font-size: 48px;
         justify-content: center;

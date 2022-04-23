@@ -92,13 +92,13 @@ namespace PhotoCatalog.Model.Builder
             return this;
         }
 
-        public ImageDataBuilder Latitude(double? latitude)
+        public ImageDataBuilder Latitude(float? latitude)
         {
             _image.Latitude = latitude;
             return this;
         }
 
-        public ImageDataBuilder Longitude(double? longitude)
+        public ImageDataBuilder Longitude(float? longitude)
         {
             _image.Longitude = longitude;
             return this;

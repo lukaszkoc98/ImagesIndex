@@ -1,11 +1,11 @@
 import "./UploadFileModal.scss";
 import Modal from "react-modal";
-import CancelIcon from "../../Images/Cancel-icon.svg";
 import DeleteIcon from "../../Images/Delete-icon.svg";
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import Button from "../../Common/Button/Button";
 import { uploadImage } from "../../API/Endpoints/ImageController";
+import ModalHeader from "../../Common/ModalHeader/ModalHeader";
 
 interface IUploadFileModal {
   showModal: boolean;
@@ -59,10 +59,7 @@ const UploadFileModal = ({ showModal, handleCloseModal }: IUploadFileModal) => {
       overlayClassName="upload-file-modal__overlay"
       ariaHideApp={false}
     >
-      <div className="upload-file-modal__header">
-        <span>Upload File</span>
-        <img src={CancelIcon} alt="Cancel icon" onClick={handleCloseModal} />
-      </div>
+      <ModalHeader title="Upload file" handleCloseModal={handleCloseModal} />
       <div {...getRootProps({ className: "upload-file-modal__dropzone" })}>
         <input {...getInputProps()} />
         Drag and drop files or select files
