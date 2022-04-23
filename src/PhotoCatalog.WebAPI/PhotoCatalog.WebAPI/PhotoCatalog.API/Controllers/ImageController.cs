@@ -48,6 +48,21 @@ namespace PhotoCatalog.API.Controllers
             return Ok(dbPath);
         }
 
+        [HttpDelete]
+        [Route("{imagePath}")]
+        public async Task<ActionResult<ImageDTO>> DeletePicture( 
+            [FromForm(Name = "path")] string path
+            )
+        {
+            try
+            {
+                return Ok(await _imageService.DeleteImage(path));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         //Do parametrów dodać [FromQuery] KlasaModelu model
         //Trzeba dodać filtrowanie
         [HttpGet]

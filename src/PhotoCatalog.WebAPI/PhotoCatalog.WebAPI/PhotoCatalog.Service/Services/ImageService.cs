@@ -21,6 +21,7 @@ namespace PhotoCatalog.Service.Services
         IEnumerable<ImageMiniatureDTO> GetImagesMiniatures(IEnumerable<ImageDTO> imagesPaths);
         IEnumerable<ImageDTO> GetAllImages();
         Task<ImageDTO> UpdateTags(UpdateImageVM model);
+        Task<ImageDTO> DeleteImage(string imagePath);
         Task LoadImage(string path);
     }
 
@@ -194,6 +195,29 @@ namespace PhotoCatalog.Service.Services
             g.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
             g.Dispose();
             return (Image)b;
+        }
+        public IEnumerable<string> GetAllFilesPaths()
+        {
+            DynatreeItem di = new DynatreeItem(new DirectoryInfo(_imageSettings.ImagesFolderName));
+            di.FillAllFilenames(_imageSettings.ImagesFolderName);
+            return di.AllFilePaths;
+        }
+
+        public async Task<ImageDTO> DeleteImage(string imagePath)
+        {           
+            try
+            {
+                ImageDTO imageToDelete = await this.GetImageData(imagePath);
+                if (File.Exists(imagePath))
+                {
+                    File.Delete(imagePath);
+                }
+                return imageToDelete;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"File not found {imagePath}");
+            }            
         }
     }
 }
