@@ -66,9 +66,16 @@ namespace PhotoCatalog.API.Controllers
         }
 
         [HttpPut]
-        public async Task<ImageDTO> Update([FromBody] UpdateImageVM model)
+        public async Task<ActionResult<ImageDTO>> Update([FromBody] UpdateImageVM model)
         {
-            return await _imageService.UpdateTags(model);
+            return Ok(await _imageService.UpdateTags(model));
+        }
+
+        [HttpGet]
+        [Route("path")]
+        public IActionResult GetImageByPath([FromQuery]string path)
+        {
+            return Ok(_imageService.GetImageData(path));
         }
     }
 }
