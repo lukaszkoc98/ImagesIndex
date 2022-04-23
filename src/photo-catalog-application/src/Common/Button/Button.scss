@@ -1,0 +1,18 @@
+@import "src/Styles/CommonColors.scss";
+
+.button {
+    width: 120px;
+    height: 48px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: $blue-background;
+
+    .button__text {
+        font-size: 14px;
+        color: white;
+        font-weight: 700;
+    }
+}

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PhotoCatalog.Service.Services;
 using PhotoCatalog.Settings.Initializer;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,8 @@ namespace PhotoCatalog.API
                 {
                     var folderInitializer = services.GetRequiredService<IImageFolderIntializer>();
                     folderInitializer.Initialize();
+                    var fileInfoService = services.GetRequiredService<IFileInfoStoreService>();
+                    fileInfoService.Initialize();
                 }
                 catch (Exception)
                 {

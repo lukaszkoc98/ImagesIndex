@@ -19,5 +19,7 @@ namespace PhotoCatalog.Model.ViewModel
         public int? Height { get; set; }
         public ushort? ISOSpeed { get; set; }
         public DateTime? CreateDate { get; set; }
+        public float? Latitude { get; set; }
+        public float? Longitude { get; set; }
     }
 }
