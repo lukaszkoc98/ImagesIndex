@@ -46,6 +46,22 @@ namespace PhotoCatalog.API.Controllers
             return Ok(dbPath);
         }
 
+        [HttpDelete]
+        [Route("{imagePath}")]
+        public async Task<ActionResult<ImageDTO>> DeletePicture( 
+            [FromForm(Name = "path")] string path
+            )
+        {
+            try
+            {
+                return Ok(await _imageService.DeleteImage(path));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet]
         public IActionResult GetMiniatures([FromQuery] ImageGroupDTO param)
         {
@@ -64,9 +80,16 @@ namespace PhotoCatalog.API.Controllers
         }
 
         [HttpPut]
-        public async Task<ImageDTO> Update([FromBody] UpdateImageVM model)
+        public async Task<ActionResult<ImageDTO>> Update([FromBody] UpdateImageVM model)
         {
-            return await _imageService.UpdateTags(model);
+            return Ok(await _imageService.UpdateTags(model));
+        }
+
+        [HttpGet]
+        [Route("path")]
+        public IActionResult GetImageByPath([FromQuery]string path)
+        {
+            return Ok(_imageService.GetImageData(path));
         }
     }
 }
