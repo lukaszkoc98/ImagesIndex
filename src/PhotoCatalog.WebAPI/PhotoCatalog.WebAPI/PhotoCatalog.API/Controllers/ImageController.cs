@@ -4,6 +4,7 @@ using PhotoCatalog.Model.DTO;
 using PhotoCatalog.Model.ViewModel;
 using PhotoCatalog.Service.Services;
 using PhotoCatalog.Settings.Configurations;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;

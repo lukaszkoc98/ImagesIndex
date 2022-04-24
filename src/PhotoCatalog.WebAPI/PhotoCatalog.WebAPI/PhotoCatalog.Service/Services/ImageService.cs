@@ -1,6 +1,7 @@
 ﻿using ExifLibrary;
 using PhotoCatalog.Model.DTO;
 using PhotoCatalog.Model.Enums;
+using PhotoCatalog.Model.Models;
 using PhotoCatalog.Model.ViewModel;
 using PhotoCatalog.Settings.Configurations;
 using System;
@@ -279,7 +280,7 @@ namespace PhotoCatalog.Service.Services
         {           
             try
             {
-                ImageDTO imageToDelete = await this.GetImageData(imagePath);
+                ImageDTO imageToDelete = this.GetImageData(imagePath);
                 if (File.Exists(imagePath))
                 {
                     File.Delete(imagePath);
