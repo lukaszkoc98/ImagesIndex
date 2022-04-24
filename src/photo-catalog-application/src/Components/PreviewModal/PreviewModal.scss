@@ -21,6 +21,12 @@
     align-items: center;
     z-index: 10;
 }
+.preview-modal__loader-wrapper {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .preview-modal__image-and-map--wrapper {
     display: flex;
     flex-direction: row;
@@ -40,7 +46,14 @@
     }
 }
 
-.preview-modal__details {
-    font-size: 48px;
-    padding-left: 32px;
+.preview-modal__button-wrapper {
+    height: 40%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.preview-modal__input-row {
+    display: flex;
+    flex-direction: row;
 }

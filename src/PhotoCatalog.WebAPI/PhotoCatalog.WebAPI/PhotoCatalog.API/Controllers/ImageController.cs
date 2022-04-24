@@ -57,12 +57,6 @@ namespace PhotoCatalog.API.Controllers
             return Ok(miniatures);
         }
 
-        [HttpGet("test")]
-        public ActionResult<string> GetImage()
-        {
-            return "image";
-        }
-
         [HttpPut]
         public async Task<ActionResult<ImageDTO>> Update([FromBody] UpdateImageVM model)
         {

@@ -14,7 +14,7 @@ interface IInputWithLabel {
   requirements?: any;
   fieldError?: FieldError | undefined;
   errorText?: string;
-  value?: string | number;
+  defaultValue?: string | number | null | undefined;
   registerName?: string;
   min?: number;
   inputMode?: string;
@@ -35,7 +35,7 @@ const InputWithLabel = ({
   errorText,
   requirements,
   type,
-  value,
+  defaultValue,
   registerName,
   min,
   inputMode,
@@ -67,7 +67,7 @@ const InputWithLabel = ({
         className="input-with-label__input"
         inputMode={inputMode ? "numeric" : "text"}
         placeholder={inputPlaceholder}
-        value={value}
+        defaultValue={defaultValue ? defaultValue : undefined}
         disabled={disabled}
       />
       <ErrorText

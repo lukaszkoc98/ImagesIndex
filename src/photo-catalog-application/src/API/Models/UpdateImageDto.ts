@@ -1,5 +1,4 @@
-export interface ImageDTO {
-  dataString: string;
+export interface UpdateImageDto {
   aperture: number | null;
   model: string;
   make: string;
@@ -10,7 +9,6 @@ export interface ImageDTO {
   height: number | null;
   path: string;
   ISOSpeed: string | null;
-  modifyDate: Date | null;
   createDate: Date | null;
   latitude: number | null;
   longitude: number | null;

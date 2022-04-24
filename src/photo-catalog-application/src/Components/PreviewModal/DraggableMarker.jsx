@@ -1,14 +1,9 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Marker, Popup } from "react-leaflet";
 
-const center = {
-  lat: 50.28233,
-  lng: 18.667,
-};
-
-const DraggableMarker = () => {
+const DraggableMarker = (props) => {
   const [draggable, setDraggable] = useState(true);
-  const [position, setPosition] = useState(center);
+  const [position, setPosition] = useState(props.localization);
   const markerRef = useRef(null);
   const eventHandlers = useMemo(
     () => ({

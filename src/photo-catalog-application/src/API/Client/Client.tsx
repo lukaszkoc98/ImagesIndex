@@ -5,7 +5,8 @@ const apiUrl = "https://localhost:44301/api";
 const Client = async (
   method: Method,
   endpoint: string,
-  { body, responseIsBlob = false }: any = {}
+  { body, responseIsBlob = false }: any = {},
+  params: any = {}
 ): Promise<any> => {
   const requestResult = await axios({
     method: method,
@@ -15,6 +16,7 @@ const Client = async (
       Accept: "application/json",
     },
     data: JSON.stringify(body),
+    params: params,
     responseType: responseIsBlob ? "blob" : "json",
   });
 
