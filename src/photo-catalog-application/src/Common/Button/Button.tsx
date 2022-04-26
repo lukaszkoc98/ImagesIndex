@@ -6,8 +6,10 @@ interface IButton {
   onClick: () => void;
   isLoading?: boolean;
   marginRight?: number;
+  marginTop?: number;
   type?: "button" | "submit" | "reset" | undefined;
   disabled?: boolean;
+  width?: number;
 }
 
 const Button = ({
@@ -15,14 +17,20 @@ const Button = ({
   onClick,
   isLoading = false,
   marginRight = 0,
+  marginTop = 0,
   type = "button",
   disabled = false,
+  width = 120,
 }: IButton) => {
   return (
     <button
       className="button"
       onClick={onClick}
-      style={{ marginRight: `${marginRight}px` }}
+      style={{
+        marginRight: `${marginRight}px`,
+        marginTop: `${marginTop}px`,
+        width: `${width}px`,
+      }}
       type={type}
       disabled={disabled}
     >

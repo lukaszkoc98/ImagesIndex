@@ -1,16 +1,14 @@
 .input-with-label__wrapper {
-    width: 100%;
     .input-with-label__content {
         font-style: normal;
         font-weight: bold;
         color: gray;
         display: flex;
-        justify-content: space-between;
     }
     .input-with-label__input {
         border: 1px solid whitesmoke;
         border-radius: 6px;
-        height: 48px;
+        height: 30px;
         margin-top: 10px;
         padding: 12px;
         font-style: normal;

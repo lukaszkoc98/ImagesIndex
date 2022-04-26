@@ -42,6 +42,8 @@ namespace PhotoCatalog.API.Controllers
             {
                 await file.CopyToAsync(fileStream);
             }
+            
+            await _imageService.LoadImage(dbPath);
 
             return Ok(dbPath);
         }
