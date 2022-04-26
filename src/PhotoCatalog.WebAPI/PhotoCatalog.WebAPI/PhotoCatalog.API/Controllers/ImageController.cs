@@ -18,9 +18,10 @@ namespace PhotoCatalog.API.Controllers
     {
         private readonly IImageService _imageService;
         private readonly IImageSettings _imageSettings;
-        public ImageController(IImageService imageService)
+        public ImageController(IImageService imageService, IImageSettings imageSettings)
         {
             _imageService = imageService;
+            _imageSettings = imageSettings;
         }
 
         [HttpPost]
@@ -35,14 +36,13 @@ namespace PhotoCatalog.API.Controllers
                 Directory.CreateDirectory(_imageSettings.ImagesFolderName);
             }
 
-            var uniqueFileName = $"{title}.jpg";
-            var dbPath = Path.Combine(_imageSettings.ImagesFolderName, uniqueFileName);
+            var dbPath = Path.Combine(_imageSettings.ImagesFolderName, title);
 
             using (var fileStream = new FileStream(dbPath, FileMode.Create))
             {
                 await file.CopyToAsync(fileStream);
             }
-
+            
             await _imageService.LoadImage(dbPath);
 
             return Ok(dbPath);
@@ -72,12 +72,6 @@ namespace PhotoCatalog.API.Controllers
             var images = _imageService.GetAllImages();
             var miniatures = _imageService.GetImagesMiniatures(images);
             return Ok(miniatures);
-        }
-
-        [HttpGet("test")]
-        public ActionResult<string> GetImage()
-        {
-            return "image";
         }
 
         [HttpPut]

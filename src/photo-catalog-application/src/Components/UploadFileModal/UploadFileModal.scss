@@ -21,12 +21,6 @@
     z-index: 10;
 }
 
-.upload-file-modal__header {
-    height: 32px;
-    display: flex;
-    justify-content: space-between;
-}
-
 .upload-file-modal__dropzone {
     border: 2px dashed gray;
     border-radius: 6px;
@@ -43,4 +37,15 @@
     justify-content: flex-end;
     align-items: flex-end;
     margin-top: 30px;
+}
+
+.upload-file-modal__file-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .upload-file-modal_delete-icon {
+        width: 20px;
+        padding-right: 10px;
+    }
 }

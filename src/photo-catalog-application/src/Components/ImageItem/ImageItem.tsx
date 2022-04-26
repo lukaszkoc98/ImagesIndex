@@ -30,6 +30,7 @@ const ImageItem = ({ imageMiniature }: IImageItem) => {
           handleCloseModal={() => {
             setShowPreviewModal(false);
           }}
+          imageMiniature={imageMiniature}
         />
       )}
       <div className="image-item">
@@ -39,7 +40,7 @@ const ImageItem = ({ imageMiniature }: IImageItem) => {
         </span>
         <img
           src={imageMiniature.stringData}
-          alt="something"
+          alt="img miniature"
           className="image-item__image"
           onClick={() => setShowPreviewModal(true)}
         />
