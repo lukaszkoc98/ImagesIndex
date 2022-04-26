@@ -11,8 +11,9 @@ import { ImageDTO } from "../../API/Models/ImageDto";
 import { UpdateImageDto } from "../../API/Models/UpdateImageDto";
 import Button from "../../Common/Button/Button";
 import InputWithLabel from "../../Common/InputWithLabel/InputWithLabel";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
+import DateTimePicker from "react-datetime-picker";
 
 interface Localization {
   lat: number;
@@ -37,6 +38,7 @@ const PreviewModal = ({
   const {
     register,
     handleSubmit,
+    control,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<UpdateImageDto>();
@@ -105,25 +107,43 @@ const PreviewModal = ({
                 </MapContainer>
               ) : (
                 <MapContainer
-                  center={[50, 13]}
-                  zoom={13}
+                  center={[52, 19]}
+                  zoom={5}
                   scrollWheelZoom={false}
                   style={{ height: `100%`, width: `100%` }}
                 >
                   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <button className="preview-modal__add-marker-button">
+                    Dodaj marker
+                  </button>
                 </MapContainer>
               )}
             </div>
           </div>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="preview-modal__input-row">
+              <div className="preview-modal__datetime-wrapper">
+                <span className="preview-modal__label">Data utworzenia</span>
+                <Controller
+                  name={"createDate"}
+                  control={control}
+                  defaultValue={image?.createDate}
+                  render={({ field: { onChange, value } }) => (
+                    <DateTimePicker
+                      value={value !== null ? new Date(value) : undefined}
+                      className="preview-modal__datetime"
+                      onChange={onChange}
+                    />
+                  )}
+                />
+              </div>
               <InputWithLabel
                 label="Aperture"
                 inputPlaceholder="Enter aperture"
                 register={register}
                 registerName="aperture"
                 width={200}
-                type="number"
+                type="text"
                 defaultValue={image?.aperture}
               />
               <InputWithLabel
@@ -147,34 +167,14 @@ const PreviewModal = ({
             </div>
             <div className="preview-modal__input-row">
               <InputWithLabel
-                label="Exposure time"
-                inputPlaceholder="Enter exposure time"
+                label="Path"
+                inputPlaceholder="Enter path"
                 register={register}
-                registerName="exposureTime"
+                registerName="path"
                 width={200}
-                type="number"
-                defaultValue={image?.exposureTime}
+                type="text"
+                defaultValue={image?.path}
               />
-              <InputWithLabel
-                label="Focal lenght"
-                inputPlaceholder="Enter focal length"
-                register={register}
-                registerName="focalLength"
-                width={200}
-                type="number"
-                defaultValue={image?.focalLength}
-              />
-              <InputWithLabel
-                label="Flash"
-                inputPlaceholder="Enter flash"
-                register={register}
-                registerName="flash"
-                width={200}
-                type="number"
-                defaultValue={image?.flash}
-              />
-            </div>
-            <div className="preview-modal__input-row">
               <InputWithLabel
                 label="Width"
                 inputPlaceholder="Enter width"
@@ -205,14 +205,47 @@ const PreviewModal = ({
             </div>
             <div className="preview-modal__input-row">
               <InputWithLabel
+                label="Exposure time"
+                inputPlaceholder="Enter exposure time"
+                register={register}
+                registerName="exposureTime"
+                width={200}
+                type="text"
+                defaultValue={image?.exposureTime}
+              />
+              <InputWithLabel
+                label="Focal lenght"
+                inputPlaceholder="Enter focal length"
+                register={register}
+                registerName="focalLength"
+                width={200}
+                type="number"
+                defaultValue={image?.focalLength}
+              />
+              <InputWithLabel
+                label="Flash"
+                inputPlaceholder="Enter flash"
+                register={register}
+                registerName="flash"
+                width={200}
+                type="number"
+                defaultValue={image?.flash}
+              />
+              <InputWithLabel
                 label="Create date"
                 inputPlaceholder="Enter create date"
                 register={register}
                 registerName="createDate"
                 width={200}
                 type="text"
-                defaultValue={image?.createDate?.toString()}
+                defaultValue={
+                  image && image.createDate
+                    ? new Date(image.createDate).toLocaleString()
+                    : undefined
+                }
               />
+            </div>
+            <div className="preview-modal__input-row">
               <InputWithLabel
                 label="Latitude"
                 inputPlaceholder="Enter latitude"
@@ -231,14 +264,18 @@ const PreviewModal = ({
                 type="number"
                 defaultValue={image?.longitude}
               />
-            </div>
-            <div className="preview-modal__button-wrapper">
-              <Button
-                text="Zapisz"
-                onClick={() => {}}
-                type="submit"
-                disabled={isSubmitting}
-              />
+              <div className="preview-modal__empty" />
+              <div className="preview-modal__button-wrapper">
+                <Button
+                  text="Zapisz"
+                  onClick={() => {}}
+                  type="submit"
+                  disabled={isSubmitting}
+                  width={200}
+                  marginRight={25}
+                  marginTop={25}
+                />
+              </div>
             </div>
           </form>
         </>
