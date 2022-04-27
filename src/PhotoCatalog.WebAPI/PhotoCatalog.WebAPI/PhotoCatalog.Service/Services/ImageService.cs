@@ -151,7 +151,7 @@ namespace PhotoCatalog.Service.Services
 
             if (model.ISOSpeed.HasValue)
             {
-                file.Properties.Set(ExifTag.ISOSpeedRatings, model.ISOSpeed.Value);
+                file.Properties.Set(ExifTag.ISOSpeedRatings, (ushort)model.ISOSpeed.Value);
             }
 
             if (model.CreateDate.HasValue)

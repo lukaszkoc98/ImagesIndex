@@ -14,10 +14,10 @@ namespace PhotoCatalog.Model.ViewModel
         public string Make { get; set; }
         public double? ExposureTime { get; set; }
         public double? FocalLength { get; set; }
-        public ushort? Flash { get; set; }
+        public int? Flash { get; set; }
         public int? Width { get; set; }
         public int? Height { get; set; }
-        public ushort? ISOSpeed { get; set; }
+        public int? ISOSpeed { get; set; }
         public DateTime? CreateDate { get; set; }
         public float? Latitude { get; set; }
         public float? Longitude { get; set; }
