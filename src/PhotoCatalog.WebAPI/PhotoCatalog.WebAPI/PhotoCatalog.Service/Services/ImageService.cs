@@ -12,6 +12,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static ExifLibrary.MathEx;
 
 namespace PhotoCatalog.Service.Services
 {
@@ -91,20 +92,20 @@ namespace PhotoCatalog.Service.Services
                 throw new Exception($"Not found on {model.Path}");
             }
 
-            byte[] imageArray = await File.ReadAllBytesAsync(model.Path);
-
             var file = await ImageFile.FromFileAsync(model.Path);
 
 
             if (model.Longitude.HasValue)
             {
-                file.Properties.Set(ExifTag.GPSLongitude, Math.Abs(model.Longitude.Value));
+                var coordLong = GetLocationInDegrees(model.Longitude.Value);
+                file.Properties.Set(ExifTag.GPSLongitude, coordLong.Degrees, coordLong.Minutes, coordLong.Seconds);
                 file.Properties.Set(ExifTag.GPSLongitudeRef, model.Longitude.Value > 0 ? GPSLongitudeRef.East : GPSLongitudeRef.West);
             }
 
             if (model.Latitude.HasValue)
             {
-                file.Properties.Set(ExifTag.GPSLatitude, Math.Abs(model.Latitude.Value));
+                var coordLat = GetLocationInDegrees(model.Latitude.Value);
+                file.Properties.Set(ExifTag.GPSLatitude, coordLat.Degrees, coordLat.Minutes, coordLat.Seconds);
                 file.Properties.Set(ExifTag.GPSLatitudeRef, model.Latitude.Value > 0 ? GPSLatitudeRef.North : GPSLatitudeRef.South);
             }
 
@@ -150,7 +151,7 @@ namespace PhotoCatalog.Service.Services
 
             if (model.ISOSpeed.HasValue)
             {
-                file.Properties.Set(ExifTag.ISOSpeedRatings, model.ISOSpeed.Value);
+                file.Properties.Set(ExifTag.ISOSpeedRatings, (ushort)model.ISOSpeed.Value);
             }
 
             if (model.CreateDate.HasValue)
@@ -207,7 +208,7 @@ namespace PhotoCatalog.Service.Services
         {           
             try
             {
-                ImageDTO imageToDelete = await this.GetImageData(imagePath);
+                ImageDTO imageToDelete = this.GetImageData(imagePath);
                 if (File.Exists(imagePath))
                 {
                     File.Delete(imagePath);
@@ -218,6 +219,23 @@ namespace PhotoCatalog.Service.Services
             {
                 throw new Exception($"File not found {imagePath}");
             }            
+        }
+
+        private Coordinations GetLocationInDegrees(float coordinations)
+        {
+            var abs = Math.Abs(coordinations);
+            int sec = (int)Math.Round(abs * 3600);
+            int deg = sec / 3600;
+            sec %= 3600;
+            int min = sec / 60;
+            sec %= 60;
+
+            return new Coordinations
+            {
+                Degrees = deg,
+                Minutes = min,
+                Seconds = sec,
+            };
         }
     }
 }

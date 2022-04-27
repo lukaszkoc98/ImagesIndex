@@ -84,7 +84,8 @@ namespace PhotoCatalog.API.Controllers
         [Route("path")]
         public IActionResult GetImageByPath([FromQuery]string path)
         {
-            return Ok(_imageService.GetImageData(path));
+            var image = _imageService.GetImageData(path);
+            return Ok(image);
         }
     }
 }
