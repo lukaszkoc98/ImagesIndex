@@ -32,7 +32,7 @@ namespace PhotoCatalog.API
                     });
             });
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
 
             services.Configure<FormOptions>(o => {
                 o.ValueLengthLimit = int.MaxValue;

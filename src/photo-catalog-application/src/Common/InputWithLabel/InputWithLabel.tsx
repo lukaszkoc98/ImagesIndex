@@ -17,7 +17,6 @@ interface IInputWithLabel {
   defaultValue?: string | number | null | undefined;
   registerName?: string;
   min?: number;
-  inputMode?: string;
   fontSize?: number;
   labelSize?: number;
   disabled?: boolean;
@@ -38,7 +37,6 @@ const InputWithLabel = ({
   defaultValue,
   registerName,
   min,
-  inputMode,
   fontSize = 14,
   labelSize = 14,
   disabled = false,
@@ -65,14 +63,13 @@ const InputWithLabel = ({
         maxLength={maxInputLength}
         {...register(registerName ? registerName : label, requirements)}
         className="input-with-label__input"
-        inputMode={inputMode ? "numeric" : "text"}
         placeholder={inputPlaceholder}
         defaultValue={defaultValue ? defaultValue : undefined}
         disabled={disabled}
       />
       <ErrorText
         isVisible={fieldError !== undefined}
-        text={errorText ? errorText : "c"}
+        text={errorText ? errorText : "error"}
       />
     </div>
   );

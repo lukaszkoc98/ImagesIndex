@@ -14,6 +14,7 @@ import InputWithLabel from "../../Common/InputWithLabel/InputWithLabel";
 import { Controller, useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
 import DateTimePicker from "react-datetime-picker";
+import isNullOrWhiteSpace from "../../Functions/IsNullOrEmpty";
 
 interface Localization {
   lat: number;
@@ -51,6 +52,29 @@ const PreviewModal = ({
     ) {
       setLocalization({ lat: data.latitude, lng: data.longitude });
     }
+
+    const updateImageVm: UpdateImageDto = {
+      ISOSpeed: !isNullOrWhiteSpace(data.ISOSpeed) ? data.ISOSpeed : null,
+      aperture: !isNullOrWhiteSpace(data.aperture) ? data.aperture : null,
+      createDate: !isNullOrWhiteSpace(data.createDate) ? data.createDate : null,
+      exposureTime: !isNullOrWhiteSpace(data.exposureTime)
+        ? data.exposureTime
+        : null,
+      flash: !isNullOrWhiteSpace(data.flash) ? data.flash : null,
+      focalLength: !isNullOrWhiteSpace(data.focalLength)
+        ? data.focalLength
+        : null,
+      height: !isNullOrWhiteSpace(data.height) ? data.height : null,
+      latitude: !isNullOrWhiteSpace(data.latitude) ? data.latitude : null,
+      longitude: !isNullOrWhiteSpace(data.longitude) ? data.longitude : null,
+      make: !isNullOrWhiteSpace(data.make) ? data.make : "",
+      model: !isNullOrWhiteSpace(data.model) ? data.model : "",
+      path: !isNullOrWhiteSpace(data.path) ? data.path : "",
+      width: !isNullOrWhiteSpace(data.width) ? data.width : null,
+    };
+
+    console.log(data);
+
     updateImage(data);
   };
 
