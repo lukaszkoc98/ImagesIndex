@@ -121,7 +121,7 @@ namespace PhotoCatalog.Service.Services
 
             if (!string.IsNullOrEmpty(model.Model))
             {
-                file.Properties.Set(ExifTag.ExposureTime, model.Model);
+                file.Properties.Set(ExifTag.Model, model.Model);
             }
 
             if (!string.IsNullOrEmpty(model.Make))
