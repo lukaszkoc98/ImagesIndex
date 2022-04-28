@@ -15,6 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
 import DateTimePicker from "react-datetime-picker";
 import isNullOrWhiteSpace from "../../Functions/IsNullOrEmpty";
+import toast from "react-hot-toast";
 
 interface Localization {
   lat: number;
@@ -73,7 +74,14 @@ const PreviewModal = ({
       width: !isNullOrWhiteSpace(data.width) ? data.width : null,
     };
 
-    updateImage(updateImageVm);
+    console.log(updateImageVm);
+    updateImage(updateImageVm)
+      .then(() => {
+        toast.success("Pomyślnie zaktualizowano zdjęcie");
+      })
+      .catch(() => {
+        toast.error("Nie zaktualizowano zdjęcia. Wystąpił błąd");
+      });
   };
 
   useEffect(() => {
@@ -296,6 +304,7 @@ const PreviewModal = ({
                   width={200}
                   marginRight={25}
                   marginTop={25}
+                  isLoading={isSubmitting}
                 />
               </div>
             </div>
