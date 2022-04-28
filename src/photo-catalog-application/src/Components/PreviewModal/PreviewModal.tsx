@@ -73,9 +73,7 @@ const PreviewModal = ({
       width: !isNullOrWhiteSpace(data.width) ? data.width : null,
     };
 
-    console.log(data);
-
-    updateImage(data);
+    updateImage(updateImageVm);
   };
 
   useEffect(() => {
