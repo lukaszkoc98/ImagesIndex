@@ -5,7 +5,6 @@ using PhotoCatalog.Model.ViewModel;
 using PhotoCatalog.Service.Services;
 using PhotoCatalog.Settings.Configurations;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -63,15 +62,16 @@ namespace PhotoCatalog.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        //Do parametrów dodać [FromQuery] KlasaModelu model
-        //Trzeba dodać filtrowanie
-        [HttpGet]
-        public IActionResult GetMiniatures()
-        {
 
+        [HttpGet]
+        public IActionResult GetMiniatures([FromQuery] ImageGroupDTO param)
+        {
             var images = _imageService.GetAllImages();
-            var miniatures = _imageService.GetImagesMiniatures(images);
-            return Ok(miniatures);
+            var reduceImages = _imageService.FilterSortImages(images, param);
+            var miniatures = _imageService.GetImagesMiniatures(reduceImages);
+            var miniaturesPagin = miniatures.Skip((param.PageIndex - 1) * param.PageSize).Take(param.PageSize);
+
+            return Ok(miniaturesPagin);
         }
 
         [HttpPut]
