@@ -9,7 +9,8 @@ const controllerName = "Image";
 const apiUrl = "https://localhost:44301/api";
 
 const getImage = async (path: string): Promise<ImageDTO> => {
-  return Client("GET", `${controllerName}/path`, {}, { path: path });
+  console.log(path);
+  return Client("GET", `${controllerName}/path?path=` + path, {}, {});
 };
 
 const getMiniatures = async (
