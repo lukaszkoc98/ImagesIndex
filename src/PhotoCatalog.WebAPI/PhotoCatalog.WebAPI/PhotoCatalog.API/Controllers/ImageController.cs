@@ -85,6 +85,10 @@ namespace PhotoCatalog.API.Controllers
         [Route("path")]
         public IActionResult GetImageByPath([FromQuery]string path)
         {
+            if (String.IsNullOrEmpty(path))
+            {
+                return BadRequest("Path is invalid");
+            }
             var image = _imageService.GetImageData(path);
             return Ok(image);
         }
