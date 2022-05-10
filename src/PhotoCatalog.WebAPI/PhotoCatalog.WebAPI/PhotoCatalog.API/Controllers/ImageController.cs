@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using PhotoCatalog.Model.Enums;
 
 namespace PhotoCatalog.API.Controllers
 {
@@ -63,8 +64,8 @@ namespace PhotoCatalog.API.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult GetMiniatures([FromQuery] ImageGroupDTO param)
+        [HttpPost]
+        public IActionResult GetMiniatures([FromBody] ImageGroupDTO param)
         {
             var images = _imageService.GetAllImages();
             var reduceImages = _imageService.FilterSortImages(images, param);

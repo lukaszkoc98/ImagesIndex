@@ -1,21 +1,19 @@
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import { getMiniatures } from "../../API/Endpoints/ImageController";
+import { ImageGroupDto } from "../../API/Models/ImageGroupDto";
 import { ImageMiniatureDto } from "../../API/Models/ImageMiniatureDto";
 import { MarkerDto } from "../../API/Models/MarkerDto";
-import Button from "../../Common/Button/Button";
+import { SortType } from "../../API/Models/SortEnum";
+import FiltrationAndSorting from "../FiltarionAndSorting/FiltrationAndSorting";
 import ImageItem from "../ImageItem/ImageItem";
-import MapModal from "../MapModal/MapModal";
-import UploadFileModal from "../UploadFileModal/UploadFileModal";
 import "./ImageList.scss";
 
 const ImageList = () => {
-  const [showUploadFileModal, setShowUploadFileModal] =
-    useState<boolean>(false);
-  const [showMapModal, setShowMapModal] = useState<boolean>(false);
   const [imageMiniatures, setImageMiniatures] = useState<ImageMiniatureDto[]>(
     []
   );
+  const [pageNumber, setPageNumber] = useState<number>(0);
 
   let markers: MarkerDto[] = [];
   imageMiniatures.forEach((image) => {
@@ -30,38 +28,34 @@ const ImageList = () => {
   });
 
   useEffect(() => {
-    getMiniatures().then((data) => {
+    setImageMiniatures([]);
+    const imageGroupDto: ImageGroupDto = {
+      pageSize: 5,
+      pageIndex: pageNumber + 1,
+      apertureMax: null,
+      apertureMin: null,
+      exposureTimeMax: null,
+      exposureTimeMin: null,
+      flashMax: null,
+      flashMin: null,
+      focalLengthMax: null,
+      focalLengthMin: null,
+      makes: null,
+      models: null,
+      sortType: SortType.NameASC,
+    };
+
+    getMiniatures(imageGroupDto).then((data) => {
       setImageMiniatures(data);
     });
-  }, []);
+  }, [pageNumber]);
 
   return (
-    <>
-      <UploadFileModal
-        showModal={showUploadFileModal}
-        handleCloseModal={() => setShowUploadFileModal(false)}
-      />
-      <MapModal
-        showModal={showMapModal}
-        handleCloseModal={() => setShowMapModal(false)}
-        markers={markers}
-      />
-      <div>
-        <div className="image-list__header">
-          <Button
-            text="Show map"
-            onClick={() => {
-              setShowMapModal(true);
-            }}
-            marginRight={20}
-          />
-          <Button
-            text="Upload file"
-            onClick={() => {
-              setShowUploadFileModal(true);
-            }}
-          />
-        </div>
+    <div className="image-list__wrapper">
+      <div className="image-list__filtration">
+        <FiltrationAndSorting markers={markers} />
+      </div>
+      <div className="image-list__content">
         <div className="image-list__miniatures--wrapper">
           {imageMiniatures.map((image, index) => {
             return <ImageItem imageMiniature={image} key={index} />;
@@ -76,14 +70,14 @@ const ImageList = () => {
             pageCount={5}
             marginPagesDisplayed={1}
             pageRangeDisplayed={10}
-            forcePage={1}
-            onPageChange={() => console.log("page changed")}
+            forcePage={0}
+            onPageChange={(e) => setPageNumber(e.selected)}
             containerClassName={"pagination"}
             activeClassName={"active"}
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
