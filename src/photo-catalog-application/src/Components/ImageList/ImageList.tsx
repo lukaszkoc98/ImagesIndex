@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import { getMiniatures } from "../../API/Endpoints/ImageController";
+import { ImageGroupDto } from "../../API/Models/ImageGroupDto";
 import { ImageMiniatureDto } from "../../API/Models/ImageMiniatureDto";
 import { MarkerDto } from "../../API/Models/MarkerDto";
+import { SortType } from "../../API/Models/SortEnum";
 import FiltrationAndSorting from "../FiltarionAndSorting/FiltrationAndSorting";
 import ImageItem from "../ImageItem/ImageItem";
 import "./ImageList.scss";
@@ -11,6 +13,7 @@ const ImageList = () => {
   const [imageMiniatures, setImageMiniatures] = useState<ImageMiniatureDto[]>(
     []
   );
+  const [pageNumber, setPageNumber] = useState<number>(0);
 
   let markers: MarkerDto[] = [];
   imageMiniatures.forEach((image) => {
@@ -25,10 +28,27 @@ const ImageList = () => {
   });
 
   useEffect(() => {
-    getMiniatures().then((data) => {
+    setImageMiniatures([]);
+    const imageGroupDto: ImageGroupDto = {
+      pageSize: 5,
+      pageIndex: pageNumber + 1,
+      apertureMax: null,
+      apertureMin: null,
+      exposureTimeMax: null,
+      exposureTimeMin: null,
+      flashMax: null,
+      flashMin: null,
+      focalLengthMax: null,
+      focalLengthMin: null,
+      makes: null,
+      models: null,
+      sortType: SortType.NameASC,
+    };
+
+    getMiniatures(imageGroupDto).then((data) => {
       setImageMiniatures(data);
     });
-  }, []);
+  }, [pageNumber]);
 
   return (
     <div className="image-list__wrapper">
@@ -50,8 +70,8 @@ const ImageList = () => {
             pageCount={5}
             marginPagesDisplayed={1}
             pageRangeDisplayed={10}
-            forcePage={1}
-            onPageChange={() => console.log("page changed")}
+            forcePage={0}
+            onPageChange={(e) => setPageNumber(e.selected)}
             containerClassName={"pagination"}
             activeClassName={"active"}
           />
