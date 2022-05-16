@@ -150,7 +150,9 @@ namespace PhotoCatalog.Service.Services
                         Path = image.Path,
                         StringData = base64String,
                         Latitude = image.Latitude,
-                        Longitude = image.Longitude
+                        Longitude = image.Longitude,
+                        Make = image.Make,
+                        Model = image.Model
                     });
                 }
             }
