@@ -1,18 +1,16 @@
 ﻿using ExifLibrary;
-using PhotoCatalog.Model.Builder;
 using PhotoCatalog.Model.DTO;
 using PhotoCatalog.Model.Models;
 using PhotoCatalog.Model.ViewModel;
+using PhotoCatalog.Service.Helpers;
 using PhotoCatalog.Settings.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using static ExifLibrary.MathEx;
 
 namespace PhotoCatalog.Service.Services
 {
@@ -56,7 +54,7 @@ namespace PhotoCatalog.Service.Services
             foreach (var image in images)
             {
                 var img = Image.FromFile(image.Path);
-                var resizedImage = resizeImage(img, new Size(_imageSettings.MaxMiniatureSize, _imageSettings.MaxMiniatureSize));
+                var resizedImage = ImageHelper.ResizeImage(img, new Size(_imageSettings.MaxMiniatureSize, _imageSettings.MaxMiniatureSize));
 
                 using (MemoryStream m = new MemoryStream())
                 {
@@ -164,39 +162,6 @@ namespace PhotoCatalog.Service.Services
             return await _fileInfoStoreService.ReloadImageStoredData(model.Path);
         }
 
-        private Image resizeImage(Image imgToResize, Size size)
-        {
-            int sourceWidth = imgToResize.Width;
-            int sourceHeight = imgToResize.Height;
-
-            float nPercent = 0;
-            //Calulate  width with new desired size  
-            float nPercentW = ((float)size.Width / (float)sourceWidth);
-            //Calculate height with new desired size  
-            float nPercentH = ((float)size.Height / (float)sourceHeight);
-
-            if (nPercentH < nPercentW)
-            {
-                nPercent = nPercentH;
-            }
-            else
-            {
-                nPercent = nPercentW;
-            }
-
-            //New Width  
-            int destWidth = (int)(sourceWidth * nPercent);
-            //New Height  
-            int destHeight = (int)(sourceHeight * nPercent);
-
-            Bitmap b = new Bitmap(destWidth, destHeight);
-            Graphics g = Graphics.FromImage((Image)b);
-            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            // Draw image with new width and height  
-            g.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
-            g.Dispose();
-            return (Image)b;
-        }
         public IEnumerable<string> GetAllFilesPaths()
         {
             DynatreeItem di = new DynatreeItem(new DirectoryInfo(_imageSettings.ImagesFolderName));

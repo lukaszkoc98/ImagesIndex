@@ -2,9 +2,12 @@
 using PhotoCatalog.Model.Builder;
 using PhotoCatalog.Model.DTO;
 using PhotoCatalog.Model.Models;
+using PhotoCatalog.Service.Helpers;
 using PhotoCatalog.Settings.Configurations;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -62,11 +65,22 @@ namespace PhotoCatalog.Service.Services
                 throw new Exception($"Not found on {imagePath}");
             }
 
-            byte[] imageArray = await File.ReadAllBytesAsync(imagePath);
+            var builder = new ImageDataBuilder();
 
-            var builder = new ImageDataBuilder()
-                .DataString(imageArray)
-                .Path(imagePath);
+            var img = Image.FromFile(imagePath);
+            var resizedImage = ImageHelper.ResizeImage(img, new Size(1000, 1000));
+
+            using (MemoryStream m = new MemoryStream())
+            {
+                resizedImage.Save(m, ImageFormat.Jpeg);
+                byte[] imageBytes = m.ToArray();
+
+                string base64String = $"data:image/jpeg;base64,{Convert.ToBase64String(imageBytes)}";
+                builder = builder.DataString(imageBytes);
+            }
+
+
+            builder = builder.Path(imagePath);
 
             var file = await ImageFile.FromFileAsync(imagePath);
 
