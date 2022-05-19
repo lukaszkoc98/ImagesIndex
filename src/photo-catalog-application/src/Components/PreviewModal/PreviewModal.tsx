@@ -1,96 +1,109 @@
-import "./PreviewModal.scss";
-import Modal from "react-modal";
-import { MapContainer, TileLayer } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import ModalHeader from "../../Common/ModalHeader/ModalHeader";
-import DraggableMarker from "./DraggableMarker";
-import { useEffect, useState } from "react";
-import { ImageMiniatureDto } from "../../API/Models/ImageMiniatureDto";
-import { getImage, updateImage } from "../../API/Endpoints/ImageController";
-import { ImageDTO } from "../../API/Models/ImageDto";
-import { UpdateImageDto } from "../../API/Models/UpdateImageDto";
-import Button from "../../Common/Button/Button";
-import InputWithLabel from "../../Common/InputWithLabel/InputWithLabel";
-import { Controller, useForm } from "react-hook-form";
-import { Oval } from "react-loader-spinner";
-import DateTimePicker from "react-datetime-picker";
-import isNullOrWhiteSpace from "../../Functions/IsNullOrEmpty";
-import toast from "react-hot-toast";
-
-interface Localization {
-  lat: number;
-  lng: number;
-}
+import './PreviewModal.scss';
+import Modal from 'react-modal';
+import { MapContainer, TileLayer } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import ModalHeader from '../../Common/ModalHeader/ModalHeader';
+import DraggableMarker from './DraggableMarker';
+import { useEffect, useState } from 'react';
+import { ImageMiniatureDto } from '../../API/Models/ImageMiniatureDto';
+import {
+  deleteImage,
+  getImage,
+  updateImage,
+} from '../../API/Endpoints/ImageController';
+import { ImageDTO } from '../../API/Models/ImageDto';
+import { UpdateImageDto } from '../../API/Models/UpdateImageDto';
+import { Oval } from 'react-loader-spinner';
+import toast from 'react-hot-toast';
+import TextField from '@mui/material/TextField';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import Button from '@mui/material/Button';
+import isNullOrWhiteSpace from '../../Functions/IsNullOrEmpty';
 
 interface IPreviewModal {
   showModal: boolean;
   handleCloseModal: () => void;
   imageMiniature: ImageMiniatureDto;
+  setImageMiniatures: React.Dispatch<React.SetStateAction<ImageMiniatureDto[]>>;
 }
 
 const PreviewModal = ({
   showModal,
   handleCloseModal,
   imageMiniature,
+  setImageMiniatures,
 }: IPreviewModal) => {
-  const [localization, setLocalization] = useState<Localization | null>(null);
+  const [path, setPath] = useState<string>('');
+  const [aperture, setAperture] = useState<number | null>(null);
+  const [model, setModel] = useState<string>('');
+  const [make, setMake] = useState<string>('');
+  const [exposureTime, setExposureTime] = useState<number | null>(null);
+  const [focalLength, setFocalLength] = useState<number | null>(null);
+  const [flash, setFlash] = useState<number | null>(null);
+  const [width, setWidth] = useState<number | null>(null);
+  const [height, setHeight] = useState<number | null>(null);
+  const [isoSpeed, setIsoSpeed] = useState<number | null>(null);
+  const [createDate, setCreateDate] = useState<Date | null>(null);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+
   const [image, setImage] = useState<ImageDTO>();
-  const [isLoading, setIsloading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    setError,
-    formState: { errors, isSubmitting },
-  } = useForm<UpdateImageDto>();
-
-  const onSubmit = async (data: UpdateImageDto): Promise<void> => {
-    if (
-      data.latitude &&
-      data.longitude &&
-      (data.latitude !== image?.latitude || data.longitude !== image?.longitude)
-    ) {
-      setLocalization({ lat: data.latitude, lng: data.longitude });
-    }
-
+  const handleSave = () => {
     const updateImageVm: UpdateImageDto = {
-      ISOSpeed: !isNullOrWhiteSpace(data.ISOSpeed) ? data.ISOSpeed : null,
-      aperture: !isNullOrWhiteSpace(data.aperture) ? data.aperture : null,
-      createDate: !isNullOrWhiteSpace(data.createDate) ? data.createDate : null,
-      exposureTime: !isNullOrWhiteSpace(data.exposureTime)
-        ? data.exposureTime
-        : null,
-      flash: !isNullOrWhiteSpace(data.flash) ? data.flash : null,
-      focalLength: !isNullOrWhiteSpace(data.focalLength)
-        ? data.focalLength
-        : null,
-      height: !isNullOrWhiteSpace(data.height) ? data.height : null,
-      latitude: !isNullOrWhiteSpace(data.latitude) ? data.latitude : null,
-      longitude: !isNullOrWhiteSpace(data.longitude) ? data.longitude : null,
-      make: !isNullOrWhiteSpace(data.make) ? data.make : "",
-      model: !isNullOrWhiteSpace(data.model) ? data.model : "",
-      path: !isNullOrWhiteSpace(data.path) ? data.path : "",
-      width: !isNullOrWhiteSpace(data.width) ? data.width : null,
+      ISOSpeed: isoSpeed,
+      aperture: aperture,
+      createDate: createDate,
+      exposureTime: exposureTime,
+      flash: flash,
+      focalLength: focalLength,
+      height: height,
+      latitude: latitude,
+      longitude: longitude,
+      make: make,
+      model: model,
+      path: path,
+      width: width,
     };
 
-    console.log(updateImageVm);
     updateImage(updateImageVm)
       .then(() => {
-        toast.success("Pomyślnie zaktualizowano zdjęcie");
+        toast.success('Successfully update image');
       })
       .catch(() => {
-        toast.error("Nie zaktualizowano zdjęcia. Wystąpił błąd");
+        toast.error('Cannot update image. Some error ocurred');
       });
+  };
+
+  const handleDeleteImage = () => {
+    deleteImage(path).then(() => {
+      setImageMiniatures((prevState) =>
+        prevState.filter((item) => item.path !== path)
+      );
+      handleCloseModal();
+    });
   };
 
   useEffect(() => {
     getImage(imageMiniature.path).then((data) => {
       setImage(data);
-      if (data.latitude && data.longitude) {
-        setLocalization({ lat: data.latitude, lng: data.longitude });
-      }
-      setIsloading(false);
+      setMake(data.make);
+      setModel(data.model);
+      setPath(data.path);
+      setAperture(data.aperture);
+      setCreateDate(data.createDate);
+      setExposureTime(data.exposureTime);
+      setFocalLength(data.focalLength);
+      setFlash(data.flash);
+      setHeight(data.height);
+      setWidth(data.width);
+      setLongitude(data.longitude);
+      setLatitude(data.latitude);
+      setIsoSpeed(data.ISOSpeed);
+
+      setIsLoading(false);
     });
   }, [imageMiniature.path]);
 
@@ -98,16 +111,16 @@ const PreviewModal = ({
     <Modal
       isOpen={showModal}
       onRequestClose={handleCloseModal}
-      className="preview-modal__modal"
-      overlayClassName="preview-modal__overlay"
+      className='preview-modal__modal'
+      overlayClassName='preview-modal__overlay'
       ariaHideApp={false}
     >
       {isLoading ? (
-        <div className="preview-modal__loader-wrapper">
+        <div className='preview-modal__loader-wrapper'>
           <Oval
-            color="blue"
+            color='blue'
             width={200}
-            secondaryColor="white"
+            secondaryColor='white'
             strokeWidth={2}
             height={200}
           />
@@ -115,25 +128,30 @@ const PreviewModal = ({
       ) : (
         <>
           <ModalHeader
-            title="Image details"
+            title='Image details'
             handleCloseModal={handleCloseModal}
           />
-          <div className="preview-modal__image-and-map--wrapper">
+          <div className='preview-modal__image-and-map--wrapper'>
             <img
               src={`data:image/jpeg;base64,${image?.dataString}`}
-              alt="full size img"
-              className="preview-modal__image"
+              alt='full size img'
+              className='preview-modal__image'
             />
-            <div className="preview-modal__map--wrapper">
-              {localization?.lat && localization.lng ? (
+            <div className='preview-modal__map--wrapper'>
+              {latitude && longitude ? (
                 <MapContainer
-                  center={[localization.lat, localization.lng]}
+                  center={[latitude, longitude]}
                   zoom={13}
                   scrollWheelZoom={false}
                   style={{ height: `100%`, width: `100%` }}
                 >
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  <DraggableMarker localization={localization} />
+                  <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
+                  <DraggableMarker
+                    latitude={latitude}
+                    setLatitude={setLatitude}
+                    longitude={longitude}
+                    setLongitude={setLongitude}
+                  />
                 </MapContainer>
               ) : (
                 <MapContainer
@@ -142,173 +160,127 @@ const PreviewModal = ({
                   scrollWheelZoom={false}
                   style={{ height: `100%`, width: `100%` }}
                 >
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  <button className="preview-modal__add-marker-button">
+                  <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
+                  <button className='preview-modal__add-marker-button'>
                     Dodaj marker
                   </button>
                 </MapContainer>
               )}
             </div>
           </div>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="preview-modal__input-row">
-              <div className="preview-modal__datetime-wrapper">
-                <span className="preview-modal__label">Data utworzenia</span>
-                <Controller
-                  name={"createDate"}
-                  control={control}
-                  defaultValue={image?.createDate}
-                  render={({ field: { onChange, value } }) => (
-                    <DateTimePicker
-                      value={value !== null ? new Date(value) : undefined}
-                      className="preview-modal__datetime"
-                      onChange={onChange}
-                    />
-                  )}
-                />
-              </div>
-              <InputWithLabel
-                label="Aperture"
-                inputPlaceholder="Enter aperture"
-                register={register}
-                registerName="aperture"
-                width={200}
-                type="text"
-                defaultValue={image?.aperture}
+          <div className='preview-modal__input-row'>
+            <TextField
+              label='Aperture'
+              value={aperture ? aperture : ''}
+              onChange={(e) => setAperture(+e.target.value)}
+              type='number'
+              className='preview-modal__input'
+            />
+            <TextField
+              label='Model'
+              value={model ? model : ''}
+              onChange={(e) => setModel(e.target.value)}
+              className='preview-modal__input'
+            />
+            <TextField
+              label='Make'
+              value={make ? make : ''}
+              onChange={(e) => setMake(e.target.value)}
+              className='preview-modal__input'
+            />
+            <TextField
+              label='ISOSpeed'
+              value={isoSpeed ? isoSpeed : ''}
+              onChange={(e) => setIsoSpeed(+e.target.value)}
+              className='preview-modal__input'
+              type='number'
+            />
+          </div>
+          <div className='preview-modal__input-row'>
+            <TextField
+              label='Path'
+              value={path}
+              onChange={(e) => setPath(e.target.value)}
+              className='preview-modal__input'
+            />
+            <TextField
+              label='Width'
+              value={width ? width : ''}
+              onChange={(e) => setWidth(+e.target.value)}
+              className='preview-modal__input'
+              type='number'
+            />
+            <TextField
+              label='Height'
+              value={height ? height : ''}
+              onChange={(e) => setHeight(+e.target.value)}
+              className='preview-modal__input'
+              type='number'
+            />
+            <TextField
+              label='Flash'
+              value={flash ? flash : ''}
+              onChange={(e) => setFlash(+e.target.value)}
+              className='preview-modal__input'
+              type='number'
+            />
+          </div>
+          <div className='preview-modal__input-row'>
+            <TextField
+              label='Exposure time'
+              value={exposureTime ? exposureTime : ''}
+              onChange={(e) => setExposureTime(+e.target.value)}
+              className='preview-modal__input'
+              type='number'
+            />
+            <TextField
+              label='FocalLength'
+              value={focalLength ? focalLength : ''}
+              onChange={(e) => setFocalLength(+e.target.value)}
+              className='preview-modal__input'
+              type='number'
+            />
+            <TextField
+              label='Latitude'
+              value={latitude ? latitude : ''}
+              onChange={(e) => setLatitude(+e.target.value)}
+              className='preview-modal__input'
+              type='number'
+            />
+            <TextField
+              label='Longitude'
+              value={longitude ? longitude : ''}
+              onChange={(e) => setLongitude(+e.target.value)}
+              className='preview-modal__input'
+              type='number'
+            />
+          </div>
+          <div className='preview-modal__input-row'>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DateTimePicker
+                renderInput={(props) => <TextField {...props} />}
+                label='Create date'
+                value={createDate}
+                onChange={(e) => {
+                  setCreateDate(e);
+                }}
               />
-              <InputWithLabel
-                label="Model"
-                inputPlaceholder="Enter model"
-                register={register}
-                registerName="model"
-                width={200}
-                type="text"
-                defaultValue={image?.model}
-              />
-              <InputWithLabel
-                label="Make"
-                inputPlaceholder="Enter make"
-                register={register}
-                registerName="make"
-                width={200}
-                type="text"
-                defaultValue={image?.make}
-              />
+            </LocalizationProvider>
+            <div className='preview-modal__empty' />
+            <div className='preview-modal__button-wrapper'>
+              <Button
+                variant='contained'
+                onClick={handleDeleteImage}
+                style={{ marginRight: '20px' }}
+                disabled={isNullOrWhiteSpace(path)}
+              >
+                Delete image
+              </Button>
+              <Button variant='contained' onClick={handleSave}>
+                Save
+              </Button>
             </div>
-            <div className="preview-modal__input-row">
-              <InputWithLabel
-                label="Path"
-                inputPlaceholder="Enter path"
-                register={register}
-                registerName="path"
-                width={200}
-                type="text"
-                defaultValue={image?.path}
-              />
-              <InputWithLabel
-                label="Width"
-                inputPlaceholder="Enter width"
-                register={register}
-                registerName="width"
-                width={200}
-                type="number"
-                defaultValue={image?.width}
-              />
-              <InputWithLabel
-                label="Height"
-                inputPlaceholder="Enter height"
-                register={register}
-                registerName="height"
-                width={200}
-                type="number"
-                defaultValue={image?.height}
-              />
-              <InputWithLabel
-                label="ISOSpeed"
-                inputPlaceholder="Enter ISOSpeed"
-                register={register}
-                registerName="ISOSpeed"
-                width={200}
-                type="number"
-                defaultValue={image?.ISOSpeed}
-              />
-            </div>
-            <div className="preview-modal__input-row">
-              <InputWithLabel
-                label="Exposure time"
-                inputPlaceholder="Enter exposure time"
-                register={register}
-                registerName="exposureTime"
-                width={200}
-                type="text"
-                defaultValue={image?.exposureTime}
-              />
-              <InputWithLabel
-                label="Focal lenght"
-                inputPlaceholder="Enter focal length"
-                register={register}
-                registerName="focalLength"
-                width={200}
-                type="number"
-                defaultValue={image?.focalLength}
-              />
-              <InputWithLabel
-                label="Flash"
-                inputPlaceholder="Enter flash"
-                register={register}
-                registerName="flash"
-                width={200}
-                type="number"
-                defaultValue={image?.flash}
-              />
-              <InputWithLabel
-                label="Create date"
-                inputPlaceholder="Enter create date"
-                register={register}
-                registerName="createDate"
-                width={200}
-                type="text"
-                defaultValue={
-                  image && image.createDate
-                    ? new Date(image.createDate).toLocaleString()
-                    : undefined
-                }
-              />
-            </div>
-            <div className="preview-modal__input-row">
-              <InputWithLabel
-                label="Latitude"
-                inputPlaceholder="Enter latitude"
-                register={register}
-                registerName="latitude"
-                width={200}
-                type="number"
-                defaultValue={image?.latitude}
-              />
-              <InputWithLabel
-                label="Longitude"
-                inputPlaceholder="Enter longitude"
-                register={register}
-                registerName="longitude"
-                width={200}
-                type="number"
-                defaultValue={image?.longitude}
-              />
-              <div className="preview-modal__empty" />
-              <div className="preview-modal__button-wrapper">
-                <Button
-                  text="Zapisz"
-                  onClick={() => {}}
-                  type="submit"
-                  disabled={isSubmitting}
-                  width={200}
-                  marginRight={25}
-                  marginTop={25}
-                  isLoading={isSubmitting}
-                />
-              </div>
-            </div>
-          </form>
+          </div>
         </>
       )}
     </Modal>

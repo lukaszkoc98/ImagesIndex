@@ -4,11 +4,11 @@ export interface UpdateImageDto {
   make: string;
   exposureTime: number | null;
   focalLength: number | null;
-  flash: string | null;
+  flash: number | null;
   width: number | null;
   height: number | null;
   path: string;
-  ISOSpeed: string | null;
+  ISOSpeed: number | null;
   createDate: Date | null;
   latitude: number | null;
   longitude: number | null;

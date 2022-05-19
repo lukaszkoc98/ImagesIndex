@@ -10,7 +10,7 @@ namespace PhotoCatalog.Model.DTO
 
         public double? ApertureMin { get; set; }
         public double? ApertureMax { get; set; }
-        public List<string> Makes { get; set; }
+        public List<string> Makes { get; set; } 
         public List<string> Models { get; set; }
         public double? ExposureTimeMin { get; set; }
         public double? ExposureTimeMax { get; set; }

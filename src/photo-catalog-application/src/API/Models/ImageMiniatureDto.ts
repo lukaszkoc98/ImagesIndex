@@ -4,4 +4,6 @@ export interface ImageMiniatureDto {
   stringData: string;
   latitude: number | null;
   longitude: number | null;
+  makes: string[];
+  models: string[];
 }

@@ -1,6 +1,19 @@
 .filtration-and-sorting__header {
     display: flex;
-    padding: 16px;
+    padding: 10px;
     justify-content: space-between;
     height: 100%;
+    margin-top: 10px;
+}
+
+.filtration-and-sorting__content {
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .filtration-and-sorting__select-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
 }
