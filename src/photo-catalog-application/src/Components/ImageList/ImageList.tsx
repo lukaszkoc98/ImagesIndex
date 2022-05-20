@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import ReactPaginate from "react-paginate";
-import { getMiniatures } from "../../API/Endpoints/ImageController";
-import { ImageGroupDto } from "../../API/Models/ImageGroupDto";
-import { ImageMiniatureDto } from "../../API/Models/ImageMiniatureDto";
-import { MarkerDto } from "../../API/Models/MarkerDto";
-import { SortType } from "../../API/Models/SortEnum";
-import FiltrationAndSorting from "../FiltarionAndSorting/FiltrationAndSorting";
-import ImageItem from "../ImageItem/ImageItem";
-import "./ImageList.scss";
+import { useEffect, useState } from 'react';
+import { getMiniatures } from '../../API/Endpoints/ImageController';
+import { ImageGroupDto } from '../../API/Models/ImageGroupDto';
+import { ImageMiniatureDto } from '../../API/Models/ImageMiniatureDto';
+import { MarkerDto } from '../../API/Models/MarkerDto';
+import { SortType } from '../../API/Models/SortEnum';
+import FiltrationAndSorting from '../FiltarionAndSorting/FiltrationAndSorting';
+import ImageItem from '../ImageItem/ImageItem';
+import './ImageList.scss';
+import { Pagination } from '@mui/material';
 
 const ImageList = () => {
   const [imageMiniatures, setImageMiniatures] = useState<ImageMiniatureDto[]>(
@@ -27,11 +27,18 @@ const ImageList = () => {
     }
   });
 
+  const getMiniaturesFromApi = (imageGroupDto: ImageGroupDto) => {
+    setImageMiniatures([]);
+    getMiniatures(imageGroupDto).then((data) => {
+      setImageMiniatures(data);
+    });
+  };
+
   useEffect(() => {
     setImageMiniatures([]);
     const imageGroupDto: ImageGroupDto = {
-      pageSize: 5,
-      pageIndex: pageNumber + 1,
+      pageSize: 10,
+      pageIndex: 1,
       apertureMax: null,
       apertureMin: null,
       exposureTimeMax: null,
@@ -45,38 +52,42 @@ const ImageList = () => {
       sortType: SortType.NameASC,
     };
 
-    getMiniatures(imageGroupDto).then((data) => {
-      setImageMiniatures(data);
-    });
+    getMiniaturesFromApi(imageGroupDto);
   }, [pageNumber]);
 
   return (
-    <div className="image-list__wrapper">
-      <div className="image-list__filtration">
-        <FiltrationAndSorting markers={markers} />
-      </div>
-      <div className="image-list__content">
-        <div className="image-list__miniatures--wrapper">
+    <div className='image-list__wrapper'>
+      <aside className='image-list__filtration'>
+        <FiltrationAndSorting
+          markers={markers}
+          allMakes={['Samsung', 'Xiaomi', 'Iphone']}
+          allModels={['Galaxy', 'model1', 'model2']}
+          getMiniaturesFromApi={getMiniaturesFromApi}
+        />
+      </aside>
+      <main className='image-list__content'>
+        <div className='image-list__miniatures--wrapper'>
           {imageMiniatures.map((image, index) => {
-            return <ImageItem imageMiniature={image} key={index} />;
+            return (
+              <ImageItem
+                imageMiniature={image}
+                key={index}
+                setImageMiniatures={setImageMiniatures}
+              />
+            );
           })}
         </div>
-        <div id="image-list__pagination">
-          <ReactPaginate
-            previousLabel={"<-- previous"}
-            nextLabel={"next -->"}
-            breakLabel={"..."}
-            breakClassName={"break-me"}
-            pageCount={5}
-            marginPagesDisplayed={1}
-            pageRangeDisplayed={10}
-            forcePage={0}
-            onPageChange={(e) => setPageNumber(e.selected)}
-            containerClassName={"pagination"}
-            activeClassName={"active"}
+        <div className='image-list__pagination--wrapper'>
+          <Pagination
+            count={20}
+            onChange={(event: React.ChangeEvent<unknown>, value: number) =>
+              setPageNumber(value)
+            }
+            color='primary'
+            className='image-list__pagination'
           />
         </div>
-      </div>
+      </main>
     </div>
   );
 };

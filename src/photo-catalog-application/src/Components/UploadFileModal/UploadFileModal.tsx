@@ -1,11 +1,11 @@
-import "./UploadFileModal.scss";
-import Modal from "react-modal";
-import DeleteIcon from "../../Images/Delete-icon.svg";
-import { useState, useCallback } from "react";
-import { useDropzone } from "react-dropzone";
-import Button from "../../Common/Button/Button";
-import { uploadImage } from "../../API/Endpoints/ImageController";
-import ModalHeader from "../../Common/ModalHeader/ModalHeader";
+import './UploadFileModal.scss';
+import Modal from 'react-modal';
+import DeleteIcon from '../../Images/Delete-icon.svg';
+import { useState, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { uploadImage } from '../../API/Endpoints/ImageController';
+import ModalHeader from '../../Common/ModalHeader/ModalHeader';
+import Button from '@mui/material/Button';
 
 interface IUploadFileModal {
   showModal: boolean;
@@ -40,8 +40,8 @@ const UploadFileModal = ({ showModal, handleCloseModal }: IUploadFileModal) => {
     await Promise.all(
       myFiles.map(async (fileToUpload) => {
         const formData = new FormData();
-        formData.append("imageFile", fileToUpload);
-        formData.append("title", fileToUpload.name);
+        formData.append('imageFile', fileToUpload);
+        formData.append('title', fileToUpload.name);
         uploadImage(formData);
       })
     ).then(() => {
@@ -55,12 +55,12 @@ const UploadFileModal = ({ showModal, handleCloseModal }: IUploadFileModal) => {
     <Modal
       isOpen={showModal}
       onRequestClose={handleCloseModal}
-      className="upload-file-modal__modal"
-      overlayClassName="upload-file-modal__overlay"
+      className='upload-file-modal__modal'
+      overlayClassName='upload-file-modal__overlay'
       ariaHideApp={false}
     >
-      <ModalHeader title="Upload file" handleCloseModal={handleCloseModal} />
-      <div {...getRootProps({ className: "upload-file-modal__dropzone" })}>
+      <ModalHeader title='Upload file' handleCloseModal={handleCloseModal} />
+      <div {...getRootProps({ className: 'upload-file-modal__dropzone' })}>
         <input {...getInputProps()} />
         Drag and drop files or select files
       </div>
@@ -68,20 +68,28 @@ const UploadFileModal = ({ showModal, handleCloseModal }: IUploadFileModal) => {
       <br />
       {myFiles.map((file, index) => {
         return (
-          <div className="upload-file-modal__file-wrapper" key={index}>
+          <div className='upload-file-modal__file-wrapper' key={index}>
             <span>{file.name}</span>;
             <img
               src={DeleteIcon}
-              alt="Delete icon"
-              className="upload-file-modal_delete-icon"
+              alt='Delete icon'
+              className='upload-file-modal_delete-icon'
               onClick={() => removeFile(file)}
             ></img>
           </div>
         );
       })}
-      <div className="upload-file-modal__buttons--wrapper">
-        <Button text="Cancel" onClick={handleCloseModal} />
-        <Button text="Upload" onClick={uploadFiles} isLoading={isUploading} />
+      <div className='upload-file-modal__buttons--wrapper'>
+        <Button
+          variant='contained'
+          onClick={handleCloseModal}
+          style={{ marginRight: '20px' }}
+        >
+          Cancel
+        </Button>
+        <Button variant='contained' onClick={uploadFiles}>
+          Upload
+        </Button>
       </div>
     </Modal>
   );
