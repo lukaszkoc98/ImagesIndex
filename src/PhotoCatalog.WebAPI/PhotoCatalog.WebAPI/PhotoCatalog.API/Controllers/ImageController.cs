@@ -113,7 +113,7 @@ namespace PhotoCatalog.API.Controllers
         [Route("makes")]
         public IActionResult GetMakes()
         {
-            var models = _imageService.GetAllModels();
+            var models = _imageService.GetAllMakes();
             return Ok(models);
         }
     }
