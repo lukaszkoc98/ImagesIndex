@@ -92,5 +92,29 @@ namespace PhotoCatalog.API.Controllers
             var image = _imageService.GetImageData(path);
             return Ok(image);
         }
+
+        [HttpGet]
+        [Route("imagesCount")]
+        public IActionResult GetImagesCount()
+        {
+            var count = _imageService.GetFilesCount();
+            return Ok(count);
+        }
+
+        [HttpGet]
+        [Route("models")]
+        public IActionResult GetModels()
+        {
+            var models = _imageService.GetAllModels();
+            return Ok(models);
+        }
+
+        [HttpGet]
+        [Route("makes")]
+        public IActionResult GetMakes()
+        {
+            var models = _imageService.GetAllMakes();
+            return Ok(models);
+        }
     }
 }

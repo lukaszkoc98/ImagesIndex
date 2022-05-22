@@ -24,6 +24,10 @@ namespace PhotoCatalog.Service.Services
         Task<ImageDTO> UpdateTags(UpdateImageVM model);
         Task<ImageDTO> DeleteImage(string imagePath);
         Task LoadImage(string path);
+        int GetFilesCount();
+        public IEnumerable<string> GetAllModels();
+        public IEnumerable<string> GetAllMakes();
+
     }
 
     public class ImageService : IImageService
@@ -251,6 +255,12 @@ namespace PhotoCatalog.Service.Services
             di.FillAllFilenames(_imageSettings.ImagesFolderName);
             return di.AllFilePaths;
         }
+
+        public int GetFilesCount() => _fileInfoStoreService.Images.Count();
+
+        public IEnumerable<string> GetAllModels() => _fileInfoStoreService.Images.Select(x => x.Model).Distinct();
+
+        public IEnumerable<string> GetAllMakes() => _fileInfoStoreService.Images.Select(x => x.Make).Distinct();
 
         public async Task<ImageDTO> DeleteImage(string imagePath)
         {           
