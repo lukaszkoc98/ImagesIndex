@@ -12,6 +12,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static ExifLibrary.MathEx;
 
 namespace PhotoCatalog.Service.Services
 {
@@ -176,7 +177,6 @@ namespace PhotoCatalog.Service.Services
             {
                 throw new Exception($"Not found on {model.Path}");
             }
-
             var file = await ImageFile.FromFileAsync(model.Path);
 
 
@@ -201,7 +201,7 @@ namespace PhotoCatalog.Service.Services
 
             if (model.ExposureTime.HasValue)
             {
-                file.Properties.Set(ExifTag.ExposureTime, model.ExposureTime.Value);
+                file.Properties.Set(ExifTag.ExposureTime, new UFraction32( 1, (uint) model.ExposureTime.Value));
             }
 
             if (!string.IsNullOrEmpty(model.Model))
@@ -226,18 +226,18 @@ namespace PhotoCatalog.Service.Services
 
             if (model.Width.HasValue)
             {
-                file.Properties.Set(ExifTag.PixelXDimension, model.Width.Value);
+                file.Properties.Set(ExifTag.ImageWidth, model.Width.Value);
             }
 
             if (model.Height.HasValue)
             {
-                file.Properties.Set(ExifTag.PixelYDimension, model.Height.Value);
+                file.Properties.Set(ExifTag.ImageLength, model.Height.Value);
             }
 
             if (model.ISOSpeed.HasValue)
             {
-                file.Properties.Set(ExifTag.ISOSpeedRatings, (ushort)model.ISOSpeed.Value);
-            }
+                file.Properties.Set(ExifTag.ISOSpeedRatings,model.ISOSpeed.Value);
+            } 
 
             if (model.CreateDate.HasValue)
             {

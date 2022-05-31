@@ -53,7 +53,7 @@ const PreviewModal = ({
 
   const handleSave = () => {
     const updateImageVm: UpdateImageDto = {
-      ISOSpeed: isoSpeed,
+      isoSpeed: isoSpeed,
       aperture: aperture,
       createDate: createDate,
       exposureTime: exposureTime,
@@ -101,7 +101,7 @@ const PreviewModal = ({
       setWidth(data.width);
       setLongitude(data.longitude);
       setLatitude(data.latitude);
-      setIsoSpeed(data.ISOSpeed);
+      setIsoSpeed(data.isoSpeed);
 
       setIsLoading(false);
     });
@@ -189,7 +189,7 @@ const PreviewModal = ({
               className='preview-modal__input'
             />
             <TextField
-              label='ISOSpeed'
+              label='isoSpeed'
               value={isoSpeed ? isoSpeed : ''}
               onChange={(e) => setIsoSpeed(+e.target.value)}
               className='preview-modal__input'
