@@ -9,7 +9,7 @@ export interface ImageDTO {
   width: number | null;
   height: number | null;
   path: string;
-  ISOSpeed: number | null;
+  isoSpeed: number | null;
   modifyDate: Date | null;
   createDate: Date | null;
   latitude: number | null;
