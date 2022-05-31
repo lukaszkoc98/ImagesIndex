@@ -18,13 +18,19 @@ interface IFiltrationAndSorting {
   markers: MarkerDto[];
   allMakes: string[];
   allModels: string[];
+  pageSize: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
   getMiniaturesFromApi: (imageGroupDto: ImageGroupDto) => void;
+  setImageGroupDto: React.Dispatch<React.SetStateAction<ImageGroupDto>>;
 }
 
 const FiltrationAndSorting = ({
   markers,
   allMakes,
   allModels,
+  pageSize,
+  setPageSize,
+  setImageGroupDto,
   getMiniaturesFromApi,
 }: IFiltrationAndSorting) => {
   const [showUploadFileModal, setShowUploadFileModal] =
@@ -46,7 +52,18 @@ const FiltrationAndSorting = ({
   const [flashMin, setFlashMin] = useState<number | null>(null);
   const [flashMax, setFlashMax] = useState<number | null>(null);
 
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [sortType, setSortType] = useState<number>(SortType.NameASC);
+
+  const sortingNames: string[] = [
+    'Name ascending',
+    'Name descending',
+    'Modify data ascending',
+    'Modify date descending',
+    'Focal length ascending',
+    'Focal length descending',
+    'Exposure time ascending',
+    'Exposure time descending',
+  ];
 
   const applyFilters = () => {
     const imageGroupDto: ImageGroupDto = {
@@ -60,11 +77,11 @@ const FiltrationAndSorting = ({
       flashMin: flashMin,
       focalLengthMax: focalLengthMax,
       focalLengthMin: focalLengthMin,
-      makes: makes,
-      models: models,
-      sortType: SortType.NameASC,
+      makes: makes?.length !== 0 ? makes : null,
+      models: models?.length !== 0 ? models : null,
+      sortType: sortType,
     };
-    getMiniaturesFromApi(imageGroupDto);
+    setImageGroupDto(imageGroupDto);
   };
 
   const setDefaultFilters = () => {
@@ -83,7 +100,7 @@ const FiltrationAndSorting = ({
       models: null,
       sortType: SortType.NameASC,
     };
-    getMiniaturesFromApi(imageGroupDto);
+    setImageGroupDto(imageGroupDto);
 
     setMakes(null);
     setModels(null);
@@ -95,6 +112,7 @@ const FiltrationAndSorting = ({
     setFocalLengthMax(null);
     setFlashMin(null);
     setFlashMax(null);
+    setSortType(SortType.NameASC);
     setPageSize(10);
   };
 
@@ -127,16 +145,35 @@ const FiltrationAndSorting = ({
         </Button>
       </div>
       <div className='filtration-and-sorting__content'>
-        <TextField
-          type='number'
-          value={pageSize}
-          label='Images per site'
-          onChange={(e) => setPageSize(parseInt(e.target.value))}
-          margin='dense'
-          size='small'
-          style={{ marginTop: '15px' }}
-        />
-        <div className='filtration-and-sorting__select-wrapper'>
+        <div>
+          <InputLabel id='sorting-label'>Page size</InputLabel>
+          <TextField
+            type='number'
+            value={pageSize}
+            onChange={(e) => setPageSize(parseInt(e.target.value))}
+            margin='dense'
+            size='small'
+            style={{ marginTop: '-1px', width: '100%' }}
+          />
+        </div>
+        <div>
+          <InputLabel id='sorting-label'>Sorting by</InputLabel>
+          <Select
+            value={sortType}
+            onChange={(e) => setSortType(+e.target.value)}
+            input={<OutlinedInput label='Sorting' />}
+            margin='dense'
+            size='small'
+            style={{ width: '100%' }}
+          >
+            {sortingNames.map((value, index) => (
+              <MenuItem key={index} value={index}>
+                {value}
+              </MenuItem>
+            ))}
+          </Select>
+        </div>
+        <div>
           <InputLabel id='name-label'>Makes</InputLabel>
           <Select
             multiple
@@ -145,13 +182,16 @@ const FiltrationAndSorting = ({
             input={<OutlinedInput label='Makes' />}
             margin='dense'
             size='small'
+            style={{ width: '100%' }}
           >
-            {allModels.map((value, index) => (
+            {allMakes.map((value, index) => (
               <MenuItem key={index} value={value}>
                 {value}
               </MenuItem>
             ))}
           </Select>
+        </div>
+        <div>
           <InputLabel id='name-label'>Models</InputLabel>
           <Select
             labelId='name-label'
@@ -161,8 +201,9 @@ const FiltrationAndSorting = ({
             input={<OutlinedInput label='Models' />}
             margin='dense'
             size='small'
+            style={{ width: '100%' }}
           >
-            {allMakes.map((value, index) => (
+            {allModels.map((value, index) => (
               <MenuItem key={index} value={value}>
                 {value}
               </MenuItem>

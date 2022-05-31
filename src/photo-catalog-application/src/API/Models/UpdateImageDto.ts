@@ -8,7 +8,7 @@ export interface UpdateImageDto {
   width: number | null;
   height: number | null;
   path: string;
-  ISOSpeed: number | null;
+  isoSpeed: number | null;
   createDate: Date | null;
   latitude: number | null;
   longitude: number | null;
