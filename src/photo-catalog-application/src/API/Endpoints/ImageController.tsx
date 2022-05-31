@@ -34,4 +34,25 @@ const deleteImage = async (imagePath: string): Promise<null> => {
   return Client('DELETE', `${controllerName}/imagePath`);
 };
 
-export { getImage, getMiniatures, uploadImage, updateImage, deleteImage };
+const getImageCount = async (): Promise<number> => {
+  return Client('GET', `${controllerName}/imagesCount`);
+};
+
+const getMakes = async (): Promise<string[]> => {
+  return Client('GET', `${controllerName}/makes`);
+};
+
+const getModels = async (): Promise<string[]> => {
+  return Client('GET', `${controllerName}/models`);
+};
+
+export {
+  getImage,
+  getMiniatures,
+  uploadImage,
+  updateImage,
+  deleteImage,
+  getImageCount,
+  getMakes,
+  getModels,
+};
