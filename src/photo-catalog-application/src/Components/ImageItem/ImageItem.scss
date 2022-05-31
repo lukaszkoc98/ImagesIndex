@@ -6,7 +6,9 @@
         font-weight: bold;
     }
     .image-item__image {
-        margin-top: 10px;
-        width: 140px;
+        max-height: 200px;
+        max-width: 200px;
+        object-fit: cover;
+        object-position: center;
     }
 }

@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { getMiniatures } from '../../API/Endpoints/ImageController';
+import {
+  getImageCount,
+  getMakes,
+  getMiniatures,
+  getModels,
+} from '../../API/Endpoints/ImageController';
 import { ImageGroupDto } from '../../API/Models/ImageGroupDto';
 import { ImageMiniatureDto } from '../../API/Models/ImageMiniatureDto';
 import { MarkerDto } from '../../API/Models/MarkerDto';
@@ -10,10 +15,31 @@ import './ImageList.scss';
 import { Pagination } from '@mui/material';
 
 const ImageList = () => {
+  const defaultImageGroupDto: ImageGroupDto = {
+    pageSize: 10,
+    pageIndex: 1,
+    apertureMax: null,
+    apertureMin: null,
+    exposureTimeMax: null,
+    exposureTimeMin: null,
+    flashMax: null,
+    flashMin: null,
+    focalLengthMax: null,
+    focalLengthMin: null,
+    makes: null,
+    models: null,
+    sortType: SortType.NameASC,
+  };
+
   const [imageMiniatures, setImageMiniatures] = useState<ImageMiniatureDto[]>(
     []
   );
-  const [pageNumber, setPageNumber] = useState<number>(0);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [imagesCount, setImagesCount] = useState<number>(1);
+  const [models, setModels] = useState<string[]>([]);
+  const [makes, setMakes] = useState<string[]>([]);
+  const [imageGroupDto, setImageGroupDto] =
+    useState<ImageGroupDto>(defaultImageGroupDto);
 
   let markers: MarkerDto[] = [];
   imageMiniatures.forEach((image) => {
@@ -29,40 +55,39 @@ const ImageList = () => {
 
   const getMiniaturesFromApi = (imageGroupDto: ImageGroupDto) => {
     setImageMiniatures([]);
+    setImageGroupDto(imageGroupDto);
     getMiniatures(imageGroupDto).then((data) => {
       setImageMiniatures(data);
+    });
+
+    getImageCount().then((data) => {
+      setImagesCount(data);
+    });
+
+    getModels().then((data) => {
+      setModels(data);
+    });
+
+    getMakes().then((data) => {
+      setMakes(data);
     });
   };
 
   useEffect(() => {
-    setImageMiniatures([]);
-    const imageGroupDto: ImageGroupDto = {
-      pageSize: 10,
-      pageIndex: 1,
-      apertureMax: null,
-      apertureMin: null,
-      exposureTimeMax: null,
-      exposureTimeMin: null,
-      flashMax: null,
-      flashMin: null,
-      focalLengthMax: null,
-      focalLengthMin: null,
-      makes: null,
-      models: null,
-      sortType: SortType.NameASC,
-    };
-
     getMiniaturesFromApi(imageGroupDto);
-  }, [pageNumber]);
+  }, [imageGroupDto]);
 
   return (
     <div className='image-list__wrapper'>
       <aside className='image-list__filtration'>
         <FiltrationAndSorting
           markers={markers}
-          allMakes={['Samsung', 'Xiaomi', 'Iphone']}
-          allModels={['Galaxy', 'model1', 'model2']}
+          allMakes={makes}
+          allModels={models}
           getMiniaturesFromApi={getMiniaturesFromApi}
+          pageSize={pageSize}
+          setPageSize={setPageSize}
+          setImageGroupDto={setImageGroupDto}
         />
       </aside>
       <main className='image-list__content'>
@@ -79,10 +104,10 @@ const ImageList = () => {
         </div>
         <div className='image-list__pagination--wrapper'>
           <Pagination
-            count={20}
-            onChange={(event: React.ChangeEvent<unknown>, value: number) =>
-              setPageNumber(value)
-            }
+            count={Math.ceil(imagesCount / pageSize)}
+            onChange={(event: React.ChangeEvent<unknown>, value: number) => {
+              setImageGroupDto({ ...imageGroupDto, pageIndex: value });
+            }}
             color='primary'
             className='image-list__pagination'
           />

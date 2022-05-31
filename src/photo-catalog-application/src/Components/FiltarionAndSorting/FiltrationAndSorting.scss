@@ -12,8 +12,15 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    .filtration-and-sorting__select-wrapper {
-        display: flex;
-        flex-direction: column;
+}
+
+@media screen and (max-height: 800px) {
+    .filtration-and-sorting__content {
+        height: 100%;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: 10px;
+        row-gap: 10px;
     }
 }
