@@ -123,6 +123,8 @@ namespace PhotoCatalog.Service.Services
                         .Width(widthTag != null ? (int)widthTag.Value : null)
                         .Latitude(latitudeValue.HasValue ? latitudeValue.Value : null)
                         .Longitude(longitudeValue.HasValue ? longitudeValue.Value : null);
+            resizedImage.Dispose();
+            img.Dispose();
 
             return builder.Build();
         }
