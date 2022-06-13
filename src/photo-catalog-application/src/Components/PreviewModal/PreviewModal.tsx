@@ -1,6 +1,6 @@
 import './PreviewModal.scss';
 import Modal from 'react-modal';
-import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import ModalHeader from '../../Common/ModalHeader/ModalHeader';
 import DraggableMarker from './DraggableMarker';
@@ -20,7 +20,6 @@ import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Button from '@mui/material/Button';
 import isNullOrWhiteSpace from '../../Functions/IsNullOrEmpty';
-import DialogModal from '../../Common/DialogModal/DialogModal';
 
 interface IPreviewModal {
   showModal: boolean;
@@ -51,10 +50,6 @@ const PreviewModal = ({
 
   const [image, setImage] = useState<ImageDTO>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [newLatitude, setNewLatitude] = useState<number>();
-  const [newLongitude, setNewLongitude] = useState<number>();
 
   const handleSave = () => {
     const updateImageVm: UpdateImageDto = {
@@ -112,25 +107,6 @@ const PreviewModal = ({
     });
   }, [imageMiniature.path]);
 
-  const CheckClick = () => {
-    const map = useMapEvents({
-      click: (e) => {
-        setNewLatitude(e.latlng.lat);
-        setNewLongitude(e.latlng.lng);
-        setShowDialog(true);
-      },
-    });
-    return null;
-  };
-
-  const addMarker = () => {
-    if (newLatitude && newLongitude) {
-      setLatitude(newLatitude);
-      setLongitude(newLongitude);
-      setShowDialog(false);
-    }
-  };
-
   return (
     <Modal
       isOpen={showModal}
@@ -139,14 +115,6 @@ const PreviewModal = ({
       overlayClassName='preview-modal__overlay'
       ariaHideApp={false}
     >
-      <DialogModal
-        open={showDialog}
-        handleClose={() => setShowDialog(false)}
-        title='New marker'
-        content='Do you want add to this image marker?'
-        firstAction={addMarker}
-        firstActionTitle='Add marker'
-      />
       {isLoading ? (
         <div className='preview-modal__loader-wrapper'>
           <Oval
@@ -193,7 +161,9 @@ const PreviewModal = ({
                   style={{ height: `100%`, width: `100%` }}
                 >
                   <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
-                  <CheckClick />
+                  <button className='preview-modal__add-marker-button'>
+                    Dodaj marker
+                  </button>
                 </MapContainer>
               )}
             </div>
