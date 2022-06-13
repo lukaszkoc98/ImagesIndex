@@ -189,7 +189,7 @@ const PreviewModal = ({
               className='preview-modal__input'
             />
             <TextField
-              label='ISOSpeed'
+              label='isoSpeed'
               value={isoSpeed ? isoSpeed : ''}
               onChange={(e) => setIsoSpeed(+e.target.value)}
               className='preview-modal__input'

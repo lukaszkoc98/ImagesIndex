@@ -90,8 +90,8 @@ namespace PhotoCatalog.Service.Services
             var makeTag = file.Properties.Get<ExifAscii>(ExifTag.Make);
             var focalLengthTag = file.Properties.Get<ExifURational>(ExifTag.FocalLength);
             var flashTag = file.Properties.Get<ExifEnumProperty<Flash>>(ExifTag.Flash);
-            var heightTag = file.Properties.Get<ExifUInt>(ExifTag.PixelYDimension);
-            var widthTag = file.Properties.Get<ExifUInt>(ExifTag.PixelXDimension); ;
+            var heightTag = file.Properties.Get<ExifUShort>(ExifTag.ImageLength);
+            var widthTag = file.Properties.Get<ExifUShort>(ExifTag.ImageWidth); ;
             var isoSpeedTag = file.Properties.Get<ExifUShort>(ExifTag.ISOSpeedRatings); ;
             var dateTimeOriginalTag = file.Properties.Get<ExifDateTime>(ExifTag.DateTimeOriginal);
             var latitude = file.Properties.Get<GPSLatitudeLongitude>(ExifTag.GPSLatitude);
@@ -123,6 +123,8 @@ namespace PhotoCatalog.Service.Services
                         .Width(widthTag != null ? (int)widthTag.Value : null)
                         .Latitude(latitudeValue.HasValue ? latitudeValue.Value : null)
                         .Longitude(longitudeValue.HasValue ? longitudeValue.Value : null);
+            resizedImage.Dispose();
+            img.Dispose();
 
             return builder.Build();
         }
