@@ -86,6 +86,13 @@ namespace PhotoCatalog.API.Controllers
         {
             return Ok(await _imageService.UpdateTags(model));
         }
+        [HttpPut]
+        [Route("multiple")]
+        public async Task<IActionResult> UpdateMultiple([FromBody] UpdateMultipleImagesVM model)
+        {
+            await _imageService.UpdateMultipleImagesTags(model);
+            return Ok();
+        }
 
         [HttpGet]
         [Route("path")]
@@ -122,6 +129,14 @@ namespace PhotoCatalog.API.Controllers
         {
             var models = _imageService.GetAllMakes();
             return Ok(models);
+        }
+
+        [HttpGet]
+        [Route("location")]
+        public IActionResult GetLocationInfo()
+        {
+            var info = _imageService.GetAllImagesLocationInfo();
+            return Ok(info);
         }
     }
 }
