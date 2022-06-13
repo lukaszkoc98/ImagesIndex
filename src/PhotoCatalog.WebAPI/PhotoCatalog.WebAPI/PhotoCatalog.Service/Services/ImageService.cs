@@ -23,6 +23,7 @@ namespace PhotoCatalog.Service.Services
         IEnumerable<ImageDTO> GetAllImages();
         IEnumerable<ImageDTO> FilterSortImages(IEnumerable<ImageDTO> images, ImageGroupDTO param);
         Task<ImageDTO> UpdateTags(UpdateImageVM model);
+        Task UpdateMultipleImagesTags(UpdateMultipleImagesVM model);
         Task<ImageDTO> DeleteImage(string imagePath);
         Task LoadImage(string path);
         int GetFilesCount();
@@ -296,6 +297,87 @@ namespace PhotoCatalog.Service.Services
                 Minutes = min,
                 Seconds = sec,
             };
+        }
+
+        public async Task UpdateMultipleImagesTags(UpdateMultipleImagesVM model)
+        {
+            foreach(var path in model.Paths)
+            {
+                if (!File.Exists(path))
+                {
+                    throw new Exception($"Not found on {path}");
+                }
+                var file = await ImageFile.FromFileAsync(path);
+
+
+                if (model.Longitude.HasValue)
+                {
+                    var coordLong = GetLocationInDegrees(model.Longitude.Value);
+                    file.Properties.Set(ExifTag.GPSLongitude, coordLong.Degrees, coordLong.Minutes, coordLong.Seconds);
+                    file.Properties.Set(ExifTag.GPSLongitudeRef, model.Longitude.Value > 0 ? GPSLongitudeRef.East : GPSLongitudeRef.West);
+                }
+
+                if (model.Latitude.HasValue)
+                {
+                    var coordLat = GetLocationInDegrees(model.Latitude.Value);
+                    file.Properties.Set(ExifTag.GPSLatitude, coordLat.Degrees, coordLat.Minutes, coordLat.Seconds);
+                    file.Properties.Set(ExifTag.GPSLatitudeRef, model.Latitude.Value > 0 ? GPSLatitudeRef.North : GPSLatitudeRef.South);
+                }
+
+                if (model.Aperture.HasValue)
+                {
+                    file.Properties.Set(ExifTag.ApertureValue, model.Aperture.Value);
+                }
+
+                if (model.ExposureTime.HasValue)
+                {
+                    file.Properties.Set(ExifTag.ExposureTime, new UFraction32(1, (uint)model.ExposureTime.Value));
+                }
+
+                if (!string.IsNullOrEmpty(model.Model))
+                {
+                    file.Properties.Set(ExifTag.Model, model.Model);
+                }
+
+                if (!string.IsNullOrEmpty(model.Make))
+                {
+                    file.Properties.Set(ExifTag.ExposureTime, model.Make);
+                }
+
+                if (model.FocalLength.HasValue)
+                {
+                    file.Properties.Set(ExifTag.FocalLength, model.FocalLength.Value);
+                }
+
+                if (model.Flash.HasValue)
+                {
+                    file.Properties.Set(ExifTag.Flash, (Flash)model.Flash.Value);
+                }
+
+                if (model.Width.HasValue)
+                {
+                    file.Properties.Set(ExifTag.ImageWidth, model.Width.Value);
+                }
+
+                if (model.Height.HasValue)
+                {
+                    file.Properties.Set(ExifTag.ImageLength, model.Height.Value);
+                }
+
+                if (model.ISOSpeed.HasValue)
+                {
+                    file.Properties.Set(ExifTag.ISOSpeedRatings, model.ISOSpeed.Value);
+                }
+
+                if (model.CreateDate.HasValue)
+                {
+                    file.Properties.Set(ExifTag.DateTimeOriginal, model.CreateDate.Value);
+                }
+
+                await file.SaveAsync(path);
+
+                await _fileInfoStoreService.ReloadImageStoredData(path);
+            }
         }
     }
 }

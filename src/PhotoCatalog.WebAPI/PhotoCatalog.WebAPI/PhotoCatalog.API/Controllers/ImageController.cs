@@ -85,6 +85,13 @@ namespace PhotoCatalog.API.Controllers
         {
             return Ok(await _imageService.UpdateTags(model));
         }
+        [HttpPut]
+        [Route("multiple")]
+        public async Task<IActionResult> UpdateMultiple([FromBody] UpdateMultipleImagesVM model)
+        {
+            await _imageService.UpdateMultipleImagesTags(model);
+            return Ok();
+        }
 
         [HttpGet]
         [Route("path")]
