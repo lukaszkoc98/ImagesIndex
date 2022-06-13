@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using PhotoCatalog.Model.Enums;
+using PhotoCatalog.Service.Models;
 
 namespace PhotoCatalog.API.Controllers
 {
@@ -70,9 +71,13 @@ namespace PhotoCatalog.API.Controllers
             var images = _imageService.GetAllImages();
             var reduceImages = _imageService.FilterSortImages(images, param);
             var miniatures = _imageService.GetImagesMiniatures(reduceImages);
-            var miniaturesPagin = miniatures.Skip((param.PageIndex - 1) * param.PageSize).Take(param.PageSize);
+            if(param == null)
+            {
+                return Ok(PaginatedList<ImageMiniatureDTO>.Create(miniatures, 1, _imageSettings.DefaultImagesOnPageNumber));
+            }
+            var result = PaginatedList<ImageMiniatureDTO>.Create(miniatures, param.PageIndex, param.PageSize);
 
-            return Ok(miniaturesPagin);
+            return Ok(result);
         }
 
         [HttpPut]
