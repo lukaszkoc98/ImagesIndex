@@ -2,19 +2,17 @@ import axios from 'axios';
 import { Client } from '../Client/Client';
 import { ImageDTO } from '../Models/ImageDto';
 import { ImageGroupDto } from '../Models/ImageGroupDto';
-import { ImageMiniatureDto } from '../Models/ImageMiniatureDto';
+import { PaginatedList } from '../Models/PaginatedList';
 import { UpdateImageDto } from '../Models/UpdateImageDto';
 
 const controllerName = 'Image';
 const apiUrl = 'https://localhost:44301/api';
 
 const getImage = async (path: string): Promise<ImageDTO> => {
-  return Client('GET', `${controllerName}/path?path=` + path, {}, {});
+  return Client('GET', `${controllerName}/path?path=` + path);
 };
 
-const getMiniatures = async (
-  body: ImageGroupDto
-): Promise<ImageMiniatureDto[]> => {
+const getMiniatures = async (body: ImageGroupDto): Promise<PaginatedList> => {
   return Client('POST', `${controllerName}`, { body });
 };
 
@@ -31,11 +29,12 @@ const updateImage = async (body: UpdateImageDto): Promise<null> => {
 };
 
 const deleteImage = async (imagePath: string): Promise<null> => {
-  return Client('DELETE', `${controllerName}/imagePath`);
-};
-
-const getImageCount = async (): Promise<number> => {
-  return Client('GET', `${controllerName}/imagesCount`);
+  return Client(
+    'DELETE',
+    `${controllerName}/imagePath`,
+    {},
+    { path: imagePath }
+  );
 };
 
 const getMakes = async (): Promise<string[]> => {
@@ -52,7 +51,6 @@ export {
   uploadImage,
   updateImage,
   deleteImage,
-  getImageCount,
   getMakes,
   getModels,
 };

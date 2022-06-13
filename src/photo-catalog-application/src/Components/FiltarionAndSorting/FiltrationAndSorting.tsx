@@ -20,7 +20,7 @@ interface IFiltrationAndSorting {
   allModels: string[];
   pageSize: number;
   setPageSize: React.Dispatch<React.SetStateAction<number>>;
-  getMiniaturesFromApi: (imageGroupDto: ImageGroupDto) => void;
+  setRefreshImages: React.Dispatch<React.SetStateAction<boolean>>;
   setImageGroupDto: React.Dispatch<React.SetStateAction<ImageGroupDto>>;
 }
 
@@ -30,8 +30,8 @@ const FiltrationAndSorting = ({
   allModels,
   pageSize,
   setPageSize,
+  setRefreshImages,
   setImageGroupDto,
-  getMiniaturesFromApi,
 }: IFiltrationAndSorting) => {
   const [showUploadFileModal, setShowUploadFileModal] =
     useState<boolean>(false);
@@ -81,6 +81,7 @@ const FiltrationAndSorting = ({
       models: models?.length !== 0 ? models : null,
       sortType: sortType,
     };
+
     setImageGroupDto(imageGroupDto);
   };
 
@@ -121,6 +122,7 @@ const FiltrationAndSorting = ({
       <UploadFileModal
         showModal={showUploadFileModal}
         handleCloseModal={() => setShowUploadFileModal(false)}
+        setRefreshImages={setRefreshImages}
       />
       <MapModal
         showModal={showMapModal}

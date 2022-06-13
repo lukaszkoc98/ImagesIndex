@@ -26,6 +26,7 @@ interface IPreviewModal {
   handleCloseModal: () => void;
   imageMiniature: ImageMiniatureDto;
   setImageMiniatures: React.Dispatch<React.SetStateAction<ImageMiniatureDto[]>>;
+  setRefreshImages: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const PreviewModal = ({
@@ -33,6 +34,7 @@ const PreviewModal = ({
   handleCloseModal,
   imageMiniature,
   setImageMiniatures,
+  setRefreshImages,
 }: IPreviewModal) => {
   const [path, setPath] = useState<string>('');
   const [aperture, setAperture] = useState<number | null>(null);
@@ -79,9 +81,7 @@ const PreviewModal = ({
 
   const handleDeleteImage = () => {
     deleteImage(path).then(() => {
-      setImageMiniatures((prevState) =>
-        prevState.filter((item) => item.path !== path)
-      );
+      setRefreshImages(true);
       handleCloseModal();
     });
   };

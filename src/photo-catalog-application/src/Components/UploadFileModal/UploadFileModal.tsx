@@ -6,13 +6,19 @@ import { useDropzone } from 'react-dropzone';
 import { uploadImage } from '../../API/Endpoints/ImageController';
 import ModalHeader from '../../Common/ModalHeader/ModalHeader';
 import Button from '@mui/material/Button';
+import { RotatingLines } from 'react-loader-spinner';
 
 interface IUploadFileModal {
   showModal: boolean;
   handleCloseModal: () => void;
+  setRefreshImages: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const UploadFileModal = ({ showModal, handleCloseModal }: IUploadFileModal) => {
+const UploadFileModal = ({
+  showModal,
+  handleCloseModal,
+  setRefreshImages,
+}: IUploadFileModal) => {
   const [myFiles, setMyFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
@@ -23,7 +29,7 @@ const UploadFileModal = ({ showModal, handleCloseModal }: IUploadFileModal) => {
     [myFiles]
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     maxSize: 10485760,
   });
@@ -47,6 +53,7 @@ const UploadFileModal = ({ showModal, handleCloseModal }: IUploadFileModal) => {
     ).then(() => {
       setMyFiles([]);
       setIsUploading(false);
+      setRefreshImages(true);
       handleCloseModal();
     });
   };
@@ -59,37 +66,48 @@ const UploadFileModal = ({ showModal, handleCloseModal }: IUploadFileModal) => {
       overlayClassName='upload-file-modal__overlay'
       ariaHideApp={false}
     >
-      <ModalHeader title='Upload file' handleCloseModal={handleCloseModal} />
-      <div {...getRootProps({ className: 'upload-file-modal__dropzone' })}>
-        <input {...getInputProps()} />
-        Drag and drop files or select files
-      </div>
-      <span>Files:</span>
-      <br />
-      {myFiles.map((file, index) => {
-        return (
-          <div className='upload-file-modal__file-wrapper' key={index}>
-            <span>{file.name}</span>;
-            <img
-              src={DeleteIcon}
-              alt='Delete icon'
-              className='upload-file-modal_delete-icon'
-              onClick={() => removeFile(file)}
-            ></img>
+      <div className='upload-file-modal__wrapper'>
+        <div>
+          <ModalHeader
+            title='Upload file'
+            handleCloseModal={handleCloseModal}
+          />
+          <div {...getRootProps({ className: 'upload-file-modal__dropzone' })}>
+            <input {...getInputProps()} />
+            {isUploading ? (
+              <RotatingLines width='100' strokeColor='blue' />
+            ) : (
+              <p>Drag and drop files or select files</p>
+            )}
           </div>
-        );
-      })}
-      <div className='upload-file-modal__buttons--wrapper'>
-        <Button
-          variant='contained'
-          onClick={handleCloseModal}
-          style={{ marginRight: '20px' }}
-        >
-          Cancel
-        </Button>
-        <Button variant='contained' onClick={uploadFiles}>
-          Upload
-        </Button>
+          <p className='upload-file-modal__files-text'>Files:</p>
+          <br />
+          {myFiles.map((file, index) => {
+            return (
+              <div className='upload-file-modal__file-wrapper' key={index}>
+                <span>{file.name}</span>
+                <img
+                  src={DeleteIcon}
+                  alt='Delete icon'
+                  className='upload-file-modal_delete-icon'
+                  onClick={() => removeFile(file)}
+                ></img>
+              </div>
+            );
+          })}
+        </div>
+        <div className='upload-file-modal__buttons--wrapper'>
+          <Button
+            variant='contained'
+            onClick={handleCloseModal}
+            style={{ marginRight: '20px' }}
+          >
+            Cancel
+          </Button>
+          <Button variant='contained' onClick={uploadFiles}>
+            Upload
+          </Button>
+        </div>
       </div>
     </Modal>
   );

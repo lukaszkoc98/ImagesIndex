@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import {
-  getImageCount,
   getMakes,
   getMiniatures,
   getModels,
@@ -13,6 +12,7 @@ import FiltrationAndSorting from '../FiltarionAndSorting/FiltrationAndSorting';
 import ImageItem from '../ImageItem/ImageItem';
 import './ImageList.scss';
 import { Pagination } from '@mui/material';
+import { RotatingLines } from 'react-loader-spinner';
 
 const ImageList = () => {
   const defaultImageGroupDto: ImageGroupDto = {
@@ -35,11 +35,13 @@ const ImageList = () => {
     []
   );
   const [pageSize, setPageSize] = useState<number>(10);
-  const [imagesCount, setImagesCount] = useState<number>(1);
+  const [pageCount, setPageCount] = useState<number>(1);
   const [models, setModels] = useState<string[]>([]);
   const [makes, setMakes] = useState<string[]>([]);
   const [imageGroupDto, setImageGroupDto] =
     useState<ImageGroupDto>(defaultImageGroupDto);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [refreshImages, setRefreshImages] = useState<boolean>(false);
 
   let markers: MarkerDto[] = [];
   imageMiniatures.forEach((image) => {
@@ -55,13 +57,12 @@ const ImageList = () => {
 
   const getMiniaturesFromApi = (imageGroupDto: ImageGroupDto) => {
     setImageMiniatures([]);
+    setIsLoading(true);
     setImageGroupDto(imageGroupDto);
     getMiniatures(imageGroupDto).then((data) => {
-      setImageMiniatures(data);
-    });
-
-    getImageCount().then((data) => {
-      setImagesCount(data);
+      setImageMiniatures(data.items);
+      setPageCount(data.totalPages);
+      setIsLoading(false);
     });
 
     getModels().then((data) => {
@@ -74,9 +75,15 @@ const ImageList = () => {
   };
 
   useEffect(() => {
+    if (refreshImages) {
+      getMiniaturesFromApi(imageGroupDto);
+      setRefreshImages(false);
+    }
+  }, [refreshImages]);
+
+  useEffect(() => {
     getMiniaturesFromApi(imageGroupDto);
   }, [imageGroupDto]);
-
   return (
     <div className='image-list__wrapper'>
       <aside className='image-list__filtration'>
@@ -84,34 +91,47 @@ const ImageList = () => {
           markers={markers}
           allMakes={makes}
           allModels={models}
-          getMiniaturesFromApi={getMiniaturesFromApi}
           pageSize={pageSize}
           setPageSize={setPageSize}
+          setRefreshImages={setRefreshImages}
           setImageGroupDto={setImageGroupDto}
         />
       </aside>
       <main className='image-list__content'>
-        <div className='image-list__miniatures--wrapper'>
-          {imageMiniatures.map((image, index) => {
-            return (
-              <ImageItem
-                imageMiniature={image}
-                key={index}
-                setImageMiniatures={setImageMiniatures}
+        {isLoading ? (
+          <div className='image-list__loader'>
+            <RotatingLines width='100' strokeColor='blue' />
+          </div>
+        ) : (
+          <>
+            <div className='image-list__miniatures--wrapper'>
+              {imageMiniatures.map((image, index) => {
+                return (
+                  <ImageItem
+                    imageMiniature={image}
+                    key={index}
+                    setImageMiniatures={setImageMiniatures}
+                    setRefreshImages={setRefreshImages}
+                  />
+                );
+              })}
+            </div>
+            <div className='image-list__pagination--wrapper'>
+              <Pagination
+                count={pageCount}
+                page={imageGroupDto.pageIndex}
+                onChange={(
+                  event: React.ChangeEvent<unknown>,
+                  value: number
+                ) => {
+                  setImageGroupDto({ ...imageGroupDto, pageIndex: value });
+                }}
+                color='primary'
+                className='image-list__pagination'
               />
-            );
-          })}
-        </div>
-        <div className='image-list__pagination--wrapper'>
-          <Pagination
-            count={Math.ceil(imagesCount / pageSize)}
-            onChange={(event: React.ChangeEvent<unknown>, value: number) => {
-              setImageGroupDto({ ...imageGroupDto, pageIndex: value });
-            }}
-            color='primary'
-            className='image-list__pagination'
-          />
-        </div>
+            </div>
+          </>
+        )}
       </main>
     </div>
   );

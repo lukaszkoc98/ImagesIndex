@@ -27,7 +27,8 @@ namespace PhotoCatalog.API.Controllers
 
         [HttpPost]
         [Route("upload-file")]
-        public async Task<IActionResult> UploadProfilePicture([FromForm(Name = "imageFile")] IFormFile file, [FromForm(Name = "title")] string title)
+        public async Task<IActionResult> UploadProfilePicture([FromForm(Name = "imageFile")] IFormFile file,
+            [FromForm(Name = "title")] string title)
         {
             if (file == null || file.Length == 0)
                 return BadRequest();
@@ -43,7 +44,7 @@ namespace PhotoCatalog.API.Controllers
             {
                 await file.CopyToAsync(fileStream);
             }
-            
+
             await _imageService.LoadImage(dbPath);
 
             return Ok(dbPath);
@@ -51,9 +52,7 @@ namespace PhotoCatalog.API.Controllers
 
         [HttpDelete]
         [Route("{imagePath}")]
-        public async Task<ActionResult<ImageDTO>> DeletePicture( 
-            [FromForm(Name = "path")] string path
-            )
+        public async Task<ActionResult<ImageDTO>> DeletePicture([FromQuery(Name = "path")] string path)
         {
             try
             {
@@ -71,10 +70,12 @@ namespace PhotoCatalog.API.Controllers
             var images = _imageService.GetAllImages();
             var reduceImages = _imageService.FilterSortImages(images, param);
             var miniatures = _imageService.GetImagesMiniatures(reduceImages);
-            if(param == null)
+            if (param == null)
             {
-                return Ok(PaginatedList<ImageMiniatureDTO>.Create(miniatures, 1, _imageSettings.DefaultImagesOnPageNumber));
+                return Ok(PaginatedList<ImageMiniatureDTO>.Create(miniatures, 1,
+                    _imageSettings.DefaultImagesOnPageNumber));
             }
+
             var result = PaginatedList<ImageMiniatureDTO>.Create(miniatures, param.PageIndex, param.PageSize);
 
             return Ok(result);
@@ -88,12 +89,13 @@ namespace PhotoCatalog.API.Controllers
 
         [HttpGet]
         [Route("path")]
-        public IActionResult GetImageByPath([FromQuery]string path)
+        public IActionResult GetImageByPath([FromQuery] string path)
         {
             if (String.IsNullOrEmpty(path))
             {
                 return BadRequest("Path is invalid");
             }
+
             var image = _imageService.GetImageData(path);
             return Ok(image);
         }

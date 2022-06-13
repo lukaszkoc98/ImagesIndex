@@ -6,9 +6,14 @@ import './ImageItem.scss';
 interface IImageItem {
   imageMiniature: ImageMiniatureDto;
   setImageMiniatures: React.Dispatch<React.SetStateAction<ImageMiniatureDto[]>>;
+  setRefreshImages: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ImageItem = ({ imageMiniature, setImageMiniatures }: IImageItem) => {
+const ImageItem = ({
+  imageMiniature,
+  setImageMiniatures,
+  setRefreshImages,
+}: IImageItem) => {
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
 
   useEffect(() => {
@@ -31,6 +36,7 @@ const ImageItem = ({ imageMiniature, setImageMiniatures }: IImageItem) => {
           handleCloseModal={() => {
             setShowPreviewModal(false);
           }}
+          setRefreshImages={setRefreshImages}
           imageMiniature={imageMiniature}
           setImageMiniatures={setImageMiniatures}
         />
