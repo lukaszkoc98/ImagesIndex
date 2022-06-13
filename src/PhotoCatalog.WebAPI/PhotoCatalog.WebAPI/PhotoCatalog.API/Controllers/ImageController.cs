@@ -128,5 +128,13 @@ namespace PhotoCatalog.API.Controllers
             var models = _imageService.GetAllMakes();
             return Ok(models);
         }
+
+        [HttpGet]
+        [Route("location")]
+        public IActionResult GetLocationInfo()
+        {
+            var info = _imageService.GetAllImagesLocationInfo();
+            return Ok(info);
+        }
     }
 }

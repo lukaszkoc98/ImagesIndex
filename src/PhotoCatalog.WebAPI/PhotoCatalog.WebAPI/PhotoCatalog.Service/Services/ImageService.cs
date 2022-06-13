@@ -27,8 +27,9 @@ namespace PhotoCatalog.Service.Services
         Task<ImageDTO> DeleteImage(string imagePath);
         Task LoadImage(string path);
         int GetFilesCount();
-        public IEnumerable<string> GetAllModels();
-        public IEnumerable<string> GetAllMakes();
+        IEnumerable<string> GetAllModels();
+        IEnumerable<string> GetAllMakes();
+        IEnumerable<ImageLocationDTO> GetAllImagesLocationInfo();
 
     }
 
@@ -260,6 +261,13 @@ namespace PhotoCatalog.Service.Services
         }
 
         public int GetFilesCount() => _fileInfoStoreService.Images.Count();
+
+        public IEnumerable<ImageLocationDTO> GetAllImagesLocationInfo() => _fileInfoStoreService.Images.Select(x => new ImageLocationDTO
+        {
+            Latitude = x.Latitude,
+            Longitude = x.Longitude,
+            Name = Path.GetFileName(x.Path)
+        });
 
         public IEnumerable<string> GetAllModels() => _fileInfoStoreService.Images.Select(x => x.Model).Distinct();
 
