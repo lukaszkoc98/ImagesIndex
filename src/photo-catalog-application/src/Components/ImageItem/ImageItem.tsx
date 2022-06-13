@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ImageLocalizationDto } from '../../API/Models/ImageLocalizationDto';
 import { ImageMiniatureDto } from '../../API/Models/ImageMiniatureDto';
 import PreviewModal from '../PreviewModal/PreviewModal';
 import './ImageItem.scss';
@@ -7,12 +8,16 @@ interface IImageItem {
   imageMiniature: ImageMiniatureDto;
   setImageMiniatures: React.Dispatch<React.SetStateAction<ImageMiniatureDto[]>>;
   setRefreshImages: React.Dispatch<React.SetStateAction<boolean>>;
+  setImagesLocalization: React.Dispatch<
+    React.SetStateAction<ImageLocalizationDto[]>
+  >;
 }
 
 const ImageItem = ({
   imageMiniature,
   setImageMiniatures,
   setRefreshImages,
+  setImagesLocalization,
 }: IImageItem) => {
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
 
@@ -39,6 +44,7 @@ const ImageItem = ({
           setRefreshImages={setRefreshImages}
           imageMiniature={imageMiniature}
           setImageMiniatures={setImageMiniatures}
+          setImagesLocalization={setImagesLocalization}
         />
       )}
       <div className='image-item'>

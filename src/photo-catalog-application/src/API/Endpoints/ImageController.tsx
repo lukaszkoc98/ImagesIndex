@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Client } from '../Client/Client';
 import { ImageDTO } from '../Models/ImageDto';
 import { ImageGroupDto } from '../Models/ImageGroupDto';
+import { ImageLocalizationDto } from '../Models/ImageLocalizationDto';
 import { PaginatedList } from '../Models/PaginatedList';
 import { UpdateImageDto } from '../Models/UpdateImageDto';
 
@@ -45,6 +46,10 @@ const getModels = async (): Promise<string[]> => {
   return Client('GET', `${controllerName}/models`);
 };
 
+const getImagesLocalization = async (): Promise<ImageLocalizationDto[]> => {
+  return Client('GET', `${controllerName}/location`);
+};
+
 export {
   getImage,
   getMiniatures,
@@ -53,4 +58,5 @@ export {
   deleteImage,
   getMakes,
   getModels,
+  getImagesLocalization,
 };

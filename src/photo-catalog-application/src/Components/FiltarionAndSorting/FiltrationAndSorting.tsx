@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { MarkerDto } from '../../API/Models/MarkerDto';
 import MapModal from '../MapModal/MapModal';
 import UploadFileModal from '../UploadFileModal/UploadFileModal';
 import './FiltrationAndSorting.scss';
@@ -13,9 +12,10 @@ import {
 } from '@mui/material';
 import { ImageGroupDto } from '../../API/Models/ImageGroupDto';
 import { SortType } from '../../API/Models/SortEnum';
+import { ImageLocalizationDto } from '../../API/Models/ImageLocalizationDto';
 
 interface IFiltrationAndSorting {
-  markers: MarkerDto[];
+  imagesLocalization: ImageLocalizationDto[];
   allMakes: string[];
   allModels: string[];
   pageSize: number;
@@ -25,7 +25,7 @@ interface IFiltrationAndSorting {
 }
 
 const FiltrationAndSorting = ({
-  markers,
+  imagesLocalization,
   allMakes,
   allModels,
   pageSize,
@@ -127,7 +127,7 @@ const FiltrationAndSorting = ({
       <MapModal
         showModal={showMapModal}
         handleCloseModal={() => setShowMapModal(false)}
-        markers={markers}
+        imagesLocalization={imagesLocalization}
       />
       <div className='filtration-and-sorting__header'>
         <Button

@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react';
 import {
+  getImagesLocalization,
   getMakes,
   getMiniatures,
   getModels,
 } from '../../API/Endpoints/ImageController';
 import { ImageGroupDto } from '../../API/Models/ImageGroupDto';
 import { ImageMiniatureDto } from '../../API/Models/ImageMiniatureDto';
-import { MarkerDto } from '../../API/Models/MarkerDto';
 import { SortType } from '../../API/Models/SortEnum';
 import FiltrationAndSorting from '../FiltarionAndSorting/FiltrationAndSorting';
 import ImageItem from '../ImageItem/ImageItem';
 import './ImageList.scss';
 import { Pagination } from '@mui/material';
 import { RotatingLines } from 'react-loader-spinner';
+import { ImageLocalizationDto } from '../../API/Models/ImageLocalizationDto';
 
 const ImageList = () => {
   const defaultImageGroupDto: ImageGroupDto = {
@@ -40,20 +41,11 @@ const ImageList = () => {
   const [makes, setMakes] = useState<string[]>([]);
   const [imageGroupDto, setImageGroupDto] =
     useState<ImageGroupDto>(defaultImageGroupDto);
+  const [imagesLocalization, setImagesLocalization] = useState<
+    ImageLocalizationDto[]
+  >([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [refreshImages, setRefreshImages] = useState<boolean>(false);
-
-  let markers: MarkerDto[] = [];
-  imageMiniatures.forEach((image) => {
-    if (image.latitude && image.longitude) {
-      const newMarker: MarkerDto = {
-        latitude: image.latitude,
-        longitude: image.longitude,
-        name: image.name,
-      };
-      markers.push(newMarker);
-    }
-  });
 
   const getMiniaturesFromApi = (imageGroupDto: ImageGroupDto) => {
     setImageMiniatures([]);
@@ -72,6 +64,10 @@ const ImageList = () => {
     getMakes().then((data) => {
       setMakes(data);
     });
+
+    getImagesLocalization().then((data) => {
+      setImagesLocalization(data);
+    });
   };
 
   useEffect(() => {
@@ -88,7 +84,7 @@ const ImageList = () => {
     <div className='image-list__wrapper'>
       <aside className='image-list__filtration'>
         <FiltrationAndSorting
-          markers={markers}
+          imagesLocalization={imagesLocalization}
           allMakes={makes}
           allModels={models}
           pageSize={pageSize}
@@ -112,6 +108,7 @@ const ImageList = () => {
                     key={index}
                     setImageMiniatures={setImageMiniatures}
                     setRefreshImages={setRefreshImages}
+                    setImagesLocalization={setImagesLocalization}
                   />
                 );
               })}
