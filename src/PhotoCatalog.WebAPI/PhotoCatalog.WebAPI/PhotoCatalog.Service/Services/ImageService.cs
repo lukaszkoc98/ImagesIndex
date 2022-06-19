@@ -290,6 +290,7 @@ namespace PhotoCatalog.Service.Services
                 if (File.Exists(imagePath))
                 {
                     File.Delete(imagePath);
+                    _fileInfoStoreService.Images.Remove(imageToDelete);
                 }
 
                 return imageToDelete;
